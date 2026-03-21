@@ -1,0 +1,7 @@
+{
+  "_comment": "飞书群机器人配置 - 用于发送登录二维码和监控报告",
+  "setup_guide": "https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN",
+  "webhook_url": "https://open.feishu.cn/open-apis/bot/v2/hook/xxxxx",
+  "access_token": "",
+  "chat_id": ""
+}

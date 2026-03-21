@@ -1,0 +1,19 @@
+============================================================
+📊 淘宝价格监控 - 2026-03-21 00:54
+============================================================
+Traceback (most recent call last):
+  File "/Users/john/.openclaw/workspace/skills/taobao-monitor/scripts/monitor_complete.py", line 119, in <module>
+    main()
+  File "/Users/john/.openclaw/workspace/skills/taobao-monitor/scripts/monitor_complete.py", line 54, in main
+    run("npx agent-browser state load data/taobao_auth.json 2>/dev/null")
+  File "/Users/john/.openclaw/workspace/skills/taobao-monitor/scripts/monitor_complete.py", line 20, in run
+    result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 507, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1134, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1980, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1178, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command 'npx agent-browser state load data/taobao_auth.json 2>/dev/null' timed out after 30 seconds

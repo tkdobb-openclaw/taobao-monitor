@@ -1,0 +1,228 @@
+/Users/john/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+开始监控: 20 个商品
+时间: 2026-03-21 09:00
+============================================================
+
+检查: 大洋潜水 - Perdix
+  ❌ 失败: 需要登录
+
+检查: 塞班户外 - Perdix
+  ❌ 失败: 需要登录
+
+检查: 白鳍鲨 - Perdix
+  ❌ 失败: 需要登录
+
+检查: 岁老板 - Perdix
+  ❌ 失败: 需要登录
+
+检查: 三潜社 - Perdix
+  ❌ 失败: 需要登录
+
+检查: 大洋潜水 - Peregrine
+  ❌ 失败: 需要登录
+
+检查: 塞班户外 - Peregrine
+  ❌ 失败: 需要登录
+
+检查: 白鳍鲨 - Peregrine
+  ❌ 失败: 需要登录
+
+检查: 岁老板 - Peregrine
+  ❌ 失败: 需要登录
+
+检查: 三潜社 - Peregrine
+  ❌ 失败: 需要登录
+
+检查: 大洋潜水 - Teric
+  ❌ 失败: 需要登录
+
+检查: 塞班户外 - Teric
+  ❌ 失败: 需要登录
+
+检查: 白鳍鲨 - Teric
+  ❌ 失败: 需要登录
+
+检查: 岁老板 - Teric
+  ❌ 失败: 需要登录
+
+检查: 三潜社 - Teric
+  ❌ 失败: 需要登录
+
+检查: 大洋潜水 - Tern
+  ❌ 失败: 需要登录
+
+检查: 塞班户外 - Tern
+  ❌ 失败: 需要登录
+
+检查: 白鳍鲨 - Tern
+  ❌ 失败: 需要登录
+
+检查: 岁老板 - Tern
+  ❌ 失败: 需要登录
+
+检查: 三潜社 - Tern
+  ❌ 失败: 需要登录
+
+报告已发送
+
+============================================================
+监控完成! 成功: 0/20
+需人工复核: 20 个
+/Users/john/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+开始监控: 20 个商品
+时间: 2026-03-21 21:00
+============================================================
+
+检查: 大洋潜水 - Perdix
+  找到 4 个SKU元素
+    - perdix2 ti 银色
+    - perdix2 ti black 黑色
+    - perdix2 ti 古铜色
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 塞班户外 - Perdix
+  找到 5 个SKU元素
+    - PERDIX 2 Ti/银色/
+    - PERDIX 2 Ti /Black全黑/
+推荐
+    - PERDIX 2 Ti/古铜色/
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 白鳍鲨 - Perdix
+  找到 5 个SKU元素
+    - PERDIX 2 Ti BLACK
+推荐
+    - PERDIX 2 Ti 银色
+    - 古铜色
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 岁老板 - Perdix
+  找到 6 个SKU元素
+    - 关注咨询客服优惠
+    - Ti（钛银版）
+    - Ti Black（钛黑版）
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 三潜社 - Perdix
+  找到 3 个SKU元素
+    - Swift传感器
+    - PERDIX 2 Ti
+    - PERDIX 2 Ti BLACK
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 大洋潜水 - Peregrine
+  找到 5 个SKU元素
+    - Peregrine 灰色
+    - Peregrine 白色
+推荐
+    - Peregrine 黑色
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 塞班户外 - Peregrine
+  找到 11 个SKU元素
+    - 白灰LIGHT New
+推荐
+    - 灰色DARK New
+    - 黑色经典版
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 白鳍鲨 - Peregrine
+  找到 11 个SKU元素
+    - peregrine黑色
+推荐
+    - peregrine黑盘+白色表带
+    - peregrine灰色
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 岁老板 - Peregrine
+  找到 7 个SKU元素
+    - 关注咨询客服优惠
+    - TX版黑色
+    - 普通版白色
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 三潜社 - Peregrine
+  找到 8 个SKU元素
+    - peregrine黑色
+    - peregrine黑盘+白色表带
+    - peregrine灰色
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 大洋潜水 - Teric
+  找到 11 个SKU元素
+    - 黑色表带【本月特惠】
+    - 黑色
+推荐
+    - 蓝色 现货
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 塞班户外 - Teric
+  找到 15 个SKU元素
+    - 收藏加购享优惠/联系客服/
+    - 买表送Mares女款防晒衣1件联系客服拍
+    - 黑盘黑表带
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 白鳍鲨 - Teric
+  找到 17 个SKU元素
+    - 新款 黑铜金
+    - 黑银色
+    - 黑蓝
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 岁老板 - Teric
+  找到 22 个SKU元素
+    - 关注咨询客服优惠
+    - 黑色
+    - 蓝色
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 三潜社 - Teric
+  找到 5 个SKU元素
+    - 黑色
+    - 蓝色
+    - 古铜色（JOURNEY）
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 大洋潜水 - Tern
+  找到 4 个SKU元素
+    - Tern
+推荐
+    - Tern TX
+    - 新款Swift GPS（Tern TX可用）
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 塞班户外 - Tern
+  找到 4 个SKU元素
+    - TERN New
+    - TERN TX【可另配传感器】
+    - SWIFT 传感器
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 白鳍鲨 - Tern
+  找到 4 个SKU元素
+    - TERN
+    - TERN TX (可另配传感器）
+    - SWIFT GPS传感器 新款
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 岁老板 - Tern
+  找到 5 个SKU元素
+    - 关注咨询客服优惠
+    - TERN 银色（现货）
+    - TERN TX 黑色（现货）
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 三潜社 - Tern
+  找到 2 个SKU元素
+    - TERN
+    - TERN TX
+  ❌ 失败: 未找到匹配的SKU
+
+报告已发送
+
+============================================================
+监控完成! 成功: 0/20
+需人工复核: 20 个

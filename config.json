@@ -1,0 +1,115 @@
+{
+  "app_id": "cli_a933ae5b17b9dcd4",
+  "app_secret": "pRrUlxBcvBNC4woA2abEHd3fVOyObxaT",
+  "chat_id": "oc_04717cb2f786e5e9a2869f84840924d8",
+  "feishu_webhook": "",
+  "check_interval_hours": 12,
+  "check_times": ["09:00", "21:00"],
+  "notification": {
+    "on_price_change": true,
+    "on_target_hit": true,
+    "daily_report": true
+  },
+  "sku_rules": {
+    "676780234187": {
+      "shop": "大洋潜水",
+      "model": "Perdix",
+      "target_skus": ["perdix2 ti 银色"]
+    },
+    "676463247224": {
+      "shop": "塞班户外",
+      "model": "Perdix",
+      "target_skus": ["PERDIX 2 Ti/银色/"]
+    },
+    "544005716799": {
+      "shop": "白鳍鲨",
+      "model": "Perdix",
+      "target_skus": ["PERDIX 2 Ti BLACK"]
+    },
+    "675444560376": {
+      "shop": "岁老板",
+      "model": "Perdix",
+      "target_skus": ["Ti Black（钛黑版）"]
+    },
+    "632230014333": {
+      "shop": "三潜社",
+      "model": "Perdix",
+      "target_skus": ["PERDIX 2 Ti BLACK"]
+    },
+    "623907417709": {
+      "shop": "大洋潜水",
+      "model": "Peregrine",
+      "target_skus": ["Peregrine 灰色", "Peregrine TX 需预定"]
+    },
+    "624281587175": {
+      "shop": "塞班户外",
+      "model": "Peregrine",
+      "target_skus": ["黑色 TX 版", "黑色经典版", "灰色 DARK"]
+    },
+    "623777445212": {
+      "shop": "白鳍鲨",
+      "model": "Peregrine",
+      "target_skus": ["peregrine黑色", "peregrine TX黑色（可配传感器）"]
+    },
+    "626899529012": {
+      "shop": "岁老板",
+      "model": "Peregrine",
+      "target_skus": ["普通版黑蓝色", "TX版黑色"]
+    },
+    "988652922548": {
+      "shop": "三潜社",
+      "model": "Peregrine",
+      "target_skus": ["peregrine黑色", "peregrine TX黑色（可配传感器）"]
+    },
+    "584863170468": {
+      "shop": "大洋潜水",
+      "model": "Teric",
+      "target_skus": ["浅灰色"]
+    },
+    "575523804132": {
+      "shop": "塞班户外",
+      "model": "Teric",
+      "target_skus": ["黑盘黑表带"]
+    },
+    "570722701118": {
+      "shop": "白鳍鲨",
+      "model": "Teric",
+      "target_skus": ["黑色"]
+    },
+    "667904575973": {
+      "shop": "岁老板",
+      "model": "Teric",
+      "target_skus": ["黑色"]
+    },
+    "629563113404": {
+      "shop": "三潜社",
+      "model": "Teric",
+      "target_skus": ["黑色"]
+    },
+    "753330765355": {
+      "shop": "大洋潜水",
+      "model": "Tern",
+      "target_skus": ["Tern", "Tern TX"]
+    },
+    "756509652959": {
+      "shop": "塞班户外",
+      "model": "Tern",
+      "target_skus": ["TERN New", "TERN TX【可另配传感器】"]
+    },
+    "753672216139": {
+      "shop": "白鳍鲨",
+      "model": "Tern",
+      "target_skus": ["TERN", "TERN TX (可另配传感器）"]
+    },
+    "749763697229": {
+      "shop": "岁老板",
+      "model": "Tern",
+      "target_skus": ["TERN 银色（现货）", "TERN TX 黑色（现货）"]
+    },
+    "899733746263": {
+      "shop": "三潜社",
+      "model": "Tern",
+      "target_skus": ["TERN", "TERN TX"]
+    }
+  }
+}
