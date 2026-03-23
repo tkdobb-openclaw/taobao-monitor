@@ -1,0 +1,55 @@
+{
+  "time": "2026-03-21T20:27:08.283990",
+  "results": [
+    {
+      "shop": "大洋潜水",
+      "model": "Perdix",
+      "skus": [
+        {
+          "name": "perdix2 ti 银色",
+          "price": 7281.21
+        }
+      ]
+    },
+    {
+      "shop": "塞班户外",
+      "model": "Perdix",
+      "skus": [
+        {
+          "name": "PERDIX 2 Ti/银色/",
+          "price": 7281.21
+        }
+      ]
+    },
+    {
+      "shop": "白鳍鲨",
+      "model": "Perdix",
+      "skus": [
+        {
+          "name": "PERDIX 2 Ti BLACK",
+          "price": 7641.21
+        }
+      ]
+    },
+    {
+      "shop": "岁老板",
+      "model": "Perdix",
+      "skus": [
+        {
+          "name": "Ti Black（钛黑版）",
+          "price": 7046.21
+        }
+      ]
+    },
+    {
+      "shop": "三潜社",
+      "model": "Perdix",
+      "skus": [
+        {
+          "name": "PERDIX 2 Ti BLACK",
+          "price": 7281.21
+        }
+      ]
+    }
+  ]
+}

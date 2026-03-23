@@ -1,0 +1,71 @@
+/Users/john/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+开始监控: 20 个商品
+时间: 2026-03-21 00:19
+============================================================
+
+检查: 大洋潜水 - Perdix
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 塞班户外 - Perdix
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 白鳍鲨 - Perdix
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 岁老板 - Perdix
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 三潜社 - Perdix
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 大洋潜水 - Peregrine
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 塞班户外 - Peregrine
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 白鳍鲨 - Peregrine
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 岁老板 - Peregrine
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 三潜社 - Peregrine
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 大洋潜水 - Teric
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 塞班户外 - Teric
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 白鳍鲨 - Teric
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 岁老板 - Teric
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 三潜社 - Teric
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 大洋潜水 - Tern
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 塞班户外 - Tern
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 白鳍鲨 - Tern
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 岁老板 - Tern
+  ❌ 失败: 未找到匹配的SKU
+
+检查: 三潜社 - Tern
+  ❌ 失败: 未找到匹配的SKU
+
+报告已发送
+
+============================================================
+监控完成! 成功: 0/20
+需人工复核: 20 个

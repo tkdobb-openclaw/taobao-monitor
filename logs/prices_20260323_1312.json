@@ -1,0 +1,108 @@
+{
+  "time": "2026-03-23T13:12:21.255067",
+  "total": 20,
+  "success": 0,
+  "errors": 20,
+  "results": [
+    {
+      "error": "need_login",
+      "shop": "大洋潜水",
+      "model": "Perdix"
+    },
+    {
+      "error": "need_login",
+      "shop": "塞班户外",
+      "model": "Perdix"
+    },
+    {
+      "error": "need_login",
+      "shop": "白鳍鲨",
+      "model": "Perdix"
+    },
+    {
+      "error": "need_login",
+      "shop": "岁老板",
+      "model": "Perdix"
+    },
+    {
+      "error": "need_login",
+      "shop": "三潜社",
+      "model": "Perdix"
+    },
+    {
+      "error": "need_login",
+      "shop": "大洋潜水",
+      "model": "Peregrine"
+    },
+    {
+      "error": "need_login",
+      "shop": "塞班户外",
+      "model": "Peregrine"
+    },
+    {
+      "error": "need_login",
+      "shop": "白鳍鲨",
+      "model": "Peregrine"
+    },
+    {
+      "error": "need_login",
+      "shop": "岁老板",
+      "model": "Peregrine"
+    },
+    {
+      "error": "need_login",
+      "shop": "三潜社",
+      "model": "Peregrine"
+    },
+    {
+      "error": "need_login",
+      "shop": "大洋潜水",
+      "model": "Teric"
+    },
+    {
+      "error": "need_login",
+      "shop": "塞班户外",
+      "model": "Teric"
+    },
+    {
+      "error": "need_login",
+      "shop": "白鳍鲨",
+      "model": "Teric"
+    },
+    {
+      "error": "need_login",
+      "shop": "岁老板",
+      "model": "Teric"
+    },
+    {
+      "error": "need_login",
+      "shop": "三潜社",
+      "model": "Teric"
+    },
+    {
+      "error": "need_login",
+      "shop": "大洋潜水",
+      "model": "Tern"
+    },
+    {
+      "error": "need_login",
+      "shop": "塞班户外",
+      "model": "Tern"
+    },
+    {
+      "error": "need_login",
+      "shop": "白鳍鲨",
+      "model": "Tern"
+    },
+    {
+      "error": "need_login",
+      "shop": "岁老板",
+      "model": "Tern"
+    },
+    {
+      "error": "need_login",
+      "shop": "三潜社",
+      "model": "Tern"
+    }
+  ]
+}

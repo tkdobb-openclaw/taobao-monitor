@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤿 潜水装备价格监控看板</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header .subtitle { opacity: 0.9; font-size: 1.1em; }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .stat-card .number { font-size: 2em; font-weight: bold; color: #667eea; }
+        .stat-card .label { color: #666; margin-top: 5px; }
+        
+        .change-summary {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .change-summary h2 { margin-bottom: 15px; color: #333; }
+        .change-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .change-item {
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .change-up { background: #ffebee; color: #c62828; }
+        .change-down { background: #e8f5e9; color: #2e7d32; }
+        .change-flat { background: #f5f5f5; color: #616161; }
+        .change-arrow { font-size: 1.5em; font-weight: bold; }
+        .change-amount { font-size: 1.1em; font-weight: bold; }
+        
+        .model-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        .model-title { font-size: 1.5em; color: #333; display: flex; align-items: center; gap: 10px; }
+        .price-range { color: #666; font-size: 0.9em; }
+        
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .price-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .price-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .price-table tr:hover { background: #f8f9fa; }
+        
+        .price { font-weight: bold; font-size: 1.1em; }
+        .price-low { color: #28a745; }
+        .price-high { color: #dc3545; }
+        
+        .trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .trend-up { background: #ffebee; color: #c62828; }
+        .trend-down { background: #e8f5e9; color: #2e7d32; }
+        .trend-flat { background: #e3f2fd; color: #1565c0; }
+        
+        .trend-icon { font-size: 1.2em; }
+        
+        .chart-container { height: 300px; margin-top: 20px; }
+        .update-time {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤿 Shearwater 潜水表价格监控</h1>
+            <div class="subtitle">实时监控淘宝/天猫价格变动 · 自动发现最低价</div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number">20</div>
+                <div class="label">监控商品</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">6</div>
+                <div class="label">型号类别</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">20</div>
+                <div class="label">有昨日对比</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">2026-03-23 14:13</div>
+                <div class="label">最后更新</div>
+            </div>
+        </div>
+
+        <div class="change-summary">
+            <h2>📈 今日价格变化</h2>
+            <div class="change-grid">
+
+                <div class="change-item change-down">
+                    <div>
+                        <strong>Teric</strong> - 大洋潜水<br>
+                        <small>¥7,256 → ¥6,184</small>
+                    </div>
+                    <div class="change-amount">
+                        <span class="change-arrow">↓</span>
+                        ¥1,073 (-14.8%)
+                    </div>
+                </div>
+
+                <div class="change-item change-down">
+                    <div>
+                        <strong>Perdix</strong> - 大洋潜水<br>
+                        <small>¥7,281 → ¥6,313</small>
+                    </div>
+                    <div class="change-amount">
+                        <span class="change-arrow">↓</span>
+                        ¥968 (-13.3%)
+                    </div>
+                </div>
+
+                <div class="change-item change-down">
+                    <div>
+                        <strong>Tern</strong> - 三潜社<br>
+                        <small>¥4,991 → ¥4,391</small>
+                    </div>
+                    <div class="change-amount">
+                        <span class="change-arrow">↓</span>
+                        ¥600 (-12.0%)
+                    </div>
+                </div>
+
+                <div class="change-item change-down">
+                    <div>
+                        <strong>Tern</strong> - 白鳍鲨<br>
+                        <small>¥4,491 → ¥3,951</small>
+                    </div>
+                    <div class="change-amount">
+                        <span class="change-arrow">↓</span>
+                        ¥540 (-12.0%)
+                    </div>
+                </div>
+
+                <div class="change-item change-down">
+                    <div>
+                        <strong>Tern</strong> - 大洋潜水<br>
+                        <small>¥4,101 → ¥3,601</small>
+                    </div>
+                    <div class="change-amount">
+                        <span class="change-arrow">↓</span>
+                        ¥500 (-12.2%)
+                    </div>
+                </div>
+
+                <div class="change-item change-down">
+                    <div>
+                        <strong>Teric</strong> - 白鳍鲨<br>
+                        <small>¥7,461 → ¥6,995</small>
+                    </div>
+                    <div class="change-amount">
+                        <span class="change-arrow">↓</span>
+                        ¥466 (-6.2%)
+                    </div>
+                </div>
+
+                <div class="change-item change-down">
+                    <div>
+                        <strong>Perdix</strong> - 塞班户外<br>
+                        <small>¥7,281 → ¥6,876</small>
+                    </div>
+                    <div class="change-amount">
+                        <span class="change-arrow">↓</span>
+                        ¥405 (-5.6%)
+                    </div>
+                </div>
+
+                <div class="change-item change-down">
+                    <div>
+                        <strong>Peregrine</strong> - 白鳍鲨<br>
+                        <small>¥3,771 → ¥3,387</small>
+                    </div>
+                    <div class="change-amount">
+                        <span class="change-arrow">↓</span>
+                        ¥384 (-10.2%)
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="model-section">
+            <div class="model-header">
+                <div class="model-title">
+                    <span>⌚</span>
+                    <span>Shearwater Perdix</span>
+                </div>
+                <div class="price-range">
+                    价格区间: ¥6,313 - ¥7,341 (价差 ¥1,028)
+                </div>
+            </div>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>店铺</th>
+                        <th>当前价格</th>
+                        <th>较昨日</th>
+                        <th>历史趋势</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>大洋潜水</strong></td>
+                        <td class="price price-low">¥6,313 ⭐</td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥968 (-13.3%)</span></td>
+                        <td>近8天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>塞班户外</strong></td>
+                        <td class="price ">¥6,876 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥405 (-5.6%)</span></td>
+                        <td>近8天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>岁老板</strong></td>
+                        <td class="price ">¥7,046 </td>
+                        <td><span class="trend trend-flat"><span class="trend-icon">➡️</span> 持平</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>三潜社</strong></td>
+                        <td class="price ">¥7,119 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥162 (-2.2%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>白鳍鲨</strong></td>
+                        <td class="price price-high">¥7,341 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥300 (-3.9%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <div class="chart-container">
+                <canvas id="chart_Perdix"></canvas>
+            </div>
+            <script>
+                (function() {
+                    const ctx = document.getElementById('chart_Perdix').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2026-03-21', '2026-03-22', '2026-03-23'],
+                            datasets: [
+                                {
+                                    label: '大洋潜水',
+                                    data: [7281.21, 7281.21, 6313.21],
+                                    borderColor: '#667eea',
+                                    backgroundColor: '#667eea20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '塞班户外',
+                                    data: [7281.21, 7281.21, 6876.21],
+                                    borderColor: '#764ba2',
+                                    backgroundColor: '#764ba220',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '岁老板',
+                                    data: [7046.21, 7046.21, 7046.21],
+                                    borderColor: '#f093fb',
+                                    backgroundColor: '#f093fb20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '三潜社',
+                                    data: [7281.21, 7281.21, 7119.21],
+                                    borderColor: '#f5576c',
+                                    backgroundColor: '#f5576c20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '白鳍鲨',
+                                    data: [7641.21, 7641.21, 7341.21],
+                                    borderColor: '#4facfe',
+                                    backgroundColor: '#4facfe20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Perdix 价格趋势 (最近10天)'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '¥' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })();
+            </script>
+        </div>
+
+        <div class="model-section">
+            <div class="model-header">
+                <div class="model-title">
+                    <span>⌚</span>
+                    <span>Shearwater Peregrine</span>
+                </div>
+                <div class="price-range">
+                    价格区间: ¥3,124 - ¥3,643 (价差 ¥519)
+                </div>
+            </div>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>店铺</th>
+                        <th>当前价格</th>
+                        <th>较昨日</th>
+                        <th>历史趋势</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>塞班户外</strong></td>
+                        <td class="price price-low">¥3,124 ⭐</td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥227 (-6.8%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>大洋潜水</strong></td>
+                        <td class="price ">¥3,137 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥320 (-9.3%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>白鳍鲨</strong></td>
+                        <td class="price ">¥3,387 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥384 (-10.2%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>三潜社</strong></td>
+                        <td class="price ">¥3,387 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥384 (-10.2%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>岁老板</strong></td>
+                        <td class="price price-high">¥3,643 </td>
+                        <td><span class="trend trend-flat"><span class="trend-icon">➡️</span> 持平</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <div class="chart-container">
+                <canvas id="chart_Peregrine"></canvas>
+            </div>
+            <script>
+                (function() {
+                    const ctx = document.getElementById('chart_Peregrine').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2026-03-21', '2026-03-22', '2026-03-23'],
+                            datasets: [
+                                {
+                                    label: '塞班户外',
+                                    data: [3351.21, 3351.21, 3124.21],
+                                    borderColor: '#667eea',
+                                    backgroundColor: '#667eea20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '大洋潜水',
+                                    data: [3457.21, 3457.21, 3137.21],
+                                    borderColor: '#764ba2',
+                                    backgroundColor: '#764ba220',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '白鳍鲨',
+                                    data: [3771.21, 3771.21, 3387.21],
+                                    borderColor: '#f093fb',
+                                    backgroundColor: '#f093fb20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '三潜社',
+                                    data: [3771.21, 3771.21, 3387.21],
+                                    borderColor: '#f5576c',
+                                    backgroundColor: '#f5576c20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '岁老板',
+                                    data: [3643.21, 3643.21, 3643.21],
+                                    borderColor: '#4facfe',
+                                    backgroundColor: '#4facfe20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Peregrine 价格趋势 (最近10天)'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '¥' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })();
+            </script>
+        </div>
+
+        <div class="model-section">
+            <div class="model-header">
+                <div class="model-title">
+                    <span>⌚</span>
+                    <span>Shearwater Peregrine TX</span>
+                </div>
+                <div class="price-range">
+                    价格区间: ¥4,335 - ¥4,888 (价差 ¥553)
+                </div>
+            </div>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>店铺</th>
+                        <th>当前价格</th>
+                        <th>较昨日</th>
+                        <th>历史趋势</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>大洋潜水</strong></td>
+                        <td class="price price-low">¥4,335 ⭐</td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>塞班户外</strong></td>
+                        <td class="price ">¥4,399 </td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>白鳍鲨</strong></td>
+                        <td class="price ">¥4,795 </td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>三潜社</strong></td>
+                        <td class="price ">¥4,795 </td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>岁老板</strong></td>
+                        <td class="price price-high">¥4,888 </td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <div class="chart-container">
+                <canvas id="chart_Peregrine_TX"></canvas>
+            </div>
+            <script>
+                (function() {
+                    const ctx = document.getElementById('chart_Peregrine_TX').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2026-03-21', '2026-03-22', '2026-03-23'],
+                            datasets: [
+                                {
+                                    label: '大洋潜水',
+                                    data: [3457.21, 3457.21, 3137.21],
+                                    borderColor: '#667eea',
+                                    backgroundColor: '#667eea20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '塞班户外',
+                                    data: [3351.21, 3351.21, 3124.21],
+                                    borderColor: '#764ba2',
+                                    backgroundColor: '#764ba220',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '白鳍鲨',
+                                    data: [3771.21, 3771.21, 3387.21],
+                                    borderColor: '#f093fb',
+                                    backgroundColor: '#f093fb20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '三潜社',
+                                    data: [3771.21, 3771.21, 3387.21],
+                                    borderColor: '#f5576c',
+                                    backgroundColor: '#f5576c20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '岁老板',
+                                    data: [3643.21, 3643.21, 3643.21],
+                                    borderColor: '#4facfe',
+                                    backgroundColor: '#4facfe20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Peregrine TX 价格趋势 (最近10天)'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '¥' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })();
+            </script>
+        </div>
+
+        <div class="model-section">
+            <div class="model-header">
+                <div class="model-title">
+                    <span>⌚</span>
+                    <span>Shearwater Teric</span>
+                </div>
+                <div class="price-range">
+                    价格区间: ¥6,184 - ¥7,295 (价差 ¥1,112)
+                </div>
+            </div>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>店铺</th>
+                        <th>当前价格</th>
+                        <th>较昨日</th>
+                        <th>历史趋势</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>大洋潜水</strong></td>
+                        <td class="price price-low">¥6,184 ⭐</td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥1,073 (-14.8%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>塞班户外</strong></td>
+                        <td class="price ">¥6,879 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥167 (-2.4%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>岁老板</strong></td>
+                        <td class="price ">¥6,880 </td>
+                        <td><span class="trend trend-flat"><span class="trend-icon">➡️</span> 持平</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>白鳍鲨</strong></td>
+                        <td class="price ">¥6,995 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥466 (-6.2%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>三潜社</strong></td>
+                        <td class="price price-high">¥7,295 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥166 (-2.2%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <div class="chart-container">
+                <canvas id="chart_Teric"></canvas>
+            </div>
+            <script>
+                (function() {
+                    const ctx = document.getElementById('chart_Teric').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2026-03-21', '2026-03-22', '2026-03-23'],
+                            datasets: [
+                                {
+                                    label: '大洋潜水',
+                                    data: [7256.21, 7256.21, 6183.51],
+                                    borderColor: '#667eea',
+                                    backgroundColor: '#667eea20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '塞班户外',
+                                    data: [7046.21, 7046.21, 6879.21],
+                                    borderColor: '#764ba2',
+                                    backgroundColor: '#764ba220',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '岁老板',
+                                    data: [6880.21, 6880.21, 6880.21],
+                                    borderColor: '#f093fb',
+                                    backgroundColor: '#f093fb20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '白鳍鲨',
+                                    data: [7461.21, 7461.21, 6995.21],
+                                    borderColor: '#f5576c',
+                                    backgroundColor: '#f5576c20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '三潜社',
+                                    data: [7461.21, 7461.21, 7295.21],
+                                    borderColor: '#4facfe',
+                                    backgroundColor: '#4facfe20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Teric 价格趋势 (最近10天)'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '¥' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })();
+            </script>
+        </div>
+
+        <div class="model-section">
+            <div class="model-header">
+                <div class="model-title">
+                    <span>⌚</span>
+                    <span>Shearwater Tern</span>
+                </div>
+                <div class="price-range">
+                    价格区间: ¥3,601 - ¥4,391 (价差 ¥790)
+                </div>
+            </div>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>店铺</th>
+                        <th>当前价格</th>
+                        <th>较昨日</th>
+                        <th>历史趋势</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>大洋潜水</strong></td>
+                        <td class="price price-low">¥3,601 ⭐</td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥500 (-12.2%)</span></td>
+                        <td>近8天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>岁老板</strong></td>
+                        <td class="price ">¥3,726 </td>
+                        <td><span class="trend trend-flat"><span class="trend-icon">➡️</span> 持平</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>白鳍鲨</strong></td>
+                        <td class="price ">¥3,951 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥540 (-12.0%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>塞班户外</strong></td>
+                        <td class="price ">¥3,991 </td>
+                        <td><span class="trend trend-flat"><span class="trend-icon">➡️</span> 持平</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>三潜社</strong></td>
+                        <td class="price price-high">¥4,391 </td>
+                        <td><span class="trend trend-down"><span class="trend-icon">📉</span> -¥600 (-12.0%)</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <div class="chart-container">
+                <canvas id="chart_Tern"></canvas>
+            </div>
+            <script>
+                (function() {
+                    const ctx = document.getElementById('chart_Tern').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2026-03-21', '2026-03-22', '2026-03-23'],
+                            datasets: [
+                                {
+                                    label: '大洋潜水',
+                                    data: [4101.21, 4101.21, 3601.21],
+                                    borderColor: '#667eea',
+                                    backgroundColor: '#667eea20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '岁老板',
+                                    data: [3726.21, 3726.21, 3726.21],
+                                    borderColor: '#764ba2',
+                                    backgroundColor: '#764ba220',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '白鳍鲨',
+                                    data: [4491.21, 4491.21, 3951.21],
+                                    borderColor: '#f093fb',
+                                    backgroundColor: '#f093fb20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '塞班户外',
+                                    data: [3991.21, 3991.21, 3991.21],
+                                    borderColor: '#f5576c',
+                                    backgroundColor: '#f5576c20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '三潜社',
+                                    data: [4991.21, 4991.21, 4391.21],
+                                    borderColor: '#4facfe',
+                                    backgroundColor: '#4facfe20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Tern 价格趋势 (最近10天)'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '¥' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })();
+            </script>
+        </div>
+
+        <div class="model-section">
+            <div class="model-header">
+                <div class="model-title">
+                    <span>⌚</span>
+                    <span>Shearwater Tern TX</span>
+                </div>
+                <div class="price-range">
+                    价格区间: ¥4,556 - ¥5,391 (价差 ¥835)
+                </div>
+            </div>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>店铺</th>
+                        <th>当前价格</th>
+                        <th>较昨日</th>
+                        <th>历史趋势</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td><strong>大洋潜水</strong></td>
+                        <td class="price price-low">¥4,556 ⭐</td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近8天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>岁老板</strong></td>
+                        <td class="price ">¥4,971 </td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>白鳍鲨</strong></td>
+                        <td class="price ">¥5,271 </td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>三潜社</strong></td>
+                        <td class="price ">¥5,271 </td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                    <tr>
+                        <td><strong>塞班户外</strong></td>
+                        <td class="price price-high">¥5,391 </td>
+                        <td><span class="trend trend-flat">无数据</span></td>
+                        <td>近9天记录</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            <div class="chart-container">
+                <canvas id="chart_Tern_TX"></canvas>
+            </div>
+            <script>
+                (function() {
+                    const ctx = document.getElementById('chart_Tern_TX').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['2026-03-21', '2026-03-22', '2026-03-23'],
+                            datasets: [
+                                {
+                                    label: '大洋潜水',
+                                    data: [4101.21, 4101.21, 3601.21],
+                                    borderColor: '#667eea',
+                                    backgroundColor: '#667eea20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '岁老板',
+                                    data: [3726.21, 3726.21, 3726.21],
+                                    borderColor: '#764ba2',
+                                    backgroundColor: '#764ba220',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '白鳍鲨',
+                                    data: [4491.21, 4491.21, 3951.21],
+                                    borderColor: '#f093fb',
+                                    backgroundColor: '#f093fb20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '三潜社',
+                                    data: [4991.21, 4991.21, 4391.21],
+                                    borderColor: '#f5576c',
+                                    backgroundColor: '#f5576c20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                },
+                                {
+                                    label: '塞班户外',
+                                    data: [3991.21, 3991.21, 3991.21],
+                                    borderColor: '#4facfe',
+                                    backgroundColor: '#4facfe20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Tern TX 价格趋势 (最近10天)'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '¥' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })();
+            </script>
+        </div>
+
+        <div class="update-time">
+            最后更新: 2026-03-23 14:13 | 数据自动同步中
+        </div>
+    </div>
+</body>
+</html>
