@@ -248,7 +248,7 @@ class SkuPriceMonitor:
                 self.db.add_price(r['item_id'], r['sku_prices'][0]['price'], available=True)
         
         # 保存到JSON文件（供generate_report.py使用）
-        results_file = Path(__file__).parent.parent / "data" / "latest_results.json"
+        results_file = Path(__file__).parent / "data" / "latest_results.json"
         with open(results_file, 'w', encoding='utf-8') as f:
             json.dump({
                 'time': datetime.now().isoformat(),
