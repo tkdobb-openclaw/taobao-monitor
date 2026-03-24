@@ -3,42 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>淘宝价格监控 - Shearwater 潜水表</title>
+    <title>Shearwater 潜水表价格监控</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
+            background: #f8f9fa;
             padding: 20px;
         }
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
         }
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 30px;
             text-align: center;
+            border-radius: 12px;
+            margin-bottom: 20px;
         }
-        .header h1 { font-size: 24px; margin-bottom: 10px; }
-        .header .update-time { opacity: 0.9; font-size: 14px; }
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; font-size: 14px; }
+        
         .stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        .stat {
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
             text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .stat-value {
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
             color: #667eea;
         }
@@ -47,44 +49,64 @@
             color: #6c757d;
             margin-top: 5px;
         }
+        
+        .model-section {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .model-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .price-range {
+            padding: 10px 20px;
+            background: #fff3cd;
+            color: #856404;
+            font-size: 13px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
         }
         th {
             background: #f8f9fa;
-            padding: 15px;
+            padding: 12px 20px;
             text-align: left;
             font-weight: 600;
             color: #495057;
-            border-bottom: 2px solid #dee2e6;
+            font-size: 13px;
         }
         td {
-            padding: 12px 15px;
+            padding: 12px 20px;
             border-bottom: 1px solid #e9ecef;
+            font-size: 14px;
         }
         tr:hover { background: #f8f9fa; }
-        .model-header {
-            background: #e9ecef;
+        tr:last-child td { border-bottom: none; }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
             font-weight: bold;
-            color: #495057;
         }
-        .model-header td {
-            padding: 10px 15px;
-            border-bottom: 2px solid #dee2e6;
+        .badge-lowest {
+            background: #d4edda;
+            color: #155724;
         }
-        .price {
-            font-weight: bold;
-            color: #dc3545;
-            font-size: 16px;
-        }
-        .time {
-            color: #6c757d;
-            font-size: 12px;
-        }
+        
         .footer {
-            padding: 20px;
             text-align: center;
+            padding: 20px;
             color: #6c757d;
             font-size: 12px;
         }
@@ -93,157 +115,253 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 淘宝价格监控</h1>
-            <div class="update-time">更新时间: 2026-03-24 14:48</div>
+            <h1>🤿 Shearwater 潜水表价格监控</h1>
+            <p>实时监控淘宝/天猫价格变动</p>
         </div>
         
         <div class="stats">
-            <div class="stat">
+            <div class="stat-card">
                 <div class="stat-value">20</div>
                 <div class="stat-label">监控商品</div>
             </div>
-            <div class="stat">
+            <div class="stat-card">
                 <div class="stat-value">4</div>
                 <div class="stat-label">型号类别</div>
             </div>
-            <div class="stat">
-                <div class="stat-value">3124</div>
-                <div class="stat-label">最低价格</div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">监控店铺</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">03/24 15:39</div>
+                <div class="stat-label">最后更新</div>
             </div>
         </div>
         
+        
+        <div class="price-range">💰 价格区间: ¥6313 - ¥7341 (价差 ¥1028)</div>
+        
+
         <table>
             <thead>
                 <tr>
                     <th>店铺</th>
+                    <th>SKU</th>
                     <th>价格</th>
-                    <th>更新时间</th>
+                    <th>状态</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class='model-header'><td colspan='3'>📱 Perdix</td></tr>
-            <tr>
-                <td style="color: #dc3545; font-weight: bold;">大洋潜水</td>
-                <td class='price'>¥6313</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+        
+
+                <tr>
+                    <td style="color: #dc3545; font-weight: bold;">大洋潜水</td>
+                    <td>-</td>
+                    <td style="color: #28a745; font-weight: bold;">¥6313</td>
+                    <td><span class="badge badge-lowest">⭐ 最低价</span></td>
+                </tr>
             
-            <tr>
-                <td style="">塞班户外</td>
-                <td class='price'>¥6876</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >塞班户外</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥6876</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">岁老板</td>
-                <td class='price'>¥7046</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >岁老板</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥7046</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">三潜社</td>
-                <td class='price'>¥7119</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >三潜社</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥7119</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">白鳍鲨</td>
-                <td class='price'>¥7341</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
-            <tr class='model-header'><td colspan='3'>📱 Peregrine</td></tr>
-            <tr>
-                <td style="">塞班户外</td>
-                <td class='price'>¥3124</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >白鳍鲨</td>
+                    <td>-</td>
+                    <td style="color: #dc3545; font-weight: bold;">¥7341</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="color: #dc3545; font-weight: bold;">大洋潜水</td>
-                <td class='price'>¥3137</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+</tbody></table>
+
+        <div class="price-range">💰 价格区间: ¥3124 - ¥4888 (价差 ¥1764)</div>
+        
+
+        <table>
+            <thead>
+                <tr>
+                    <th>店铺</th>
+                    <th>SKU</th>
+                    <th>价格</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+        
+
+                <tr>
+                    <td >塞班户外</td>
+                    <td>-</td>
+                    <td style="color: #28a745; font-weight: bold;">¥3124</td>
+                    <td><span class="badge badge-lowest">⭐ 最低价</span></td>
+                </tr>
             
-            <tr>
-                <td style="">白鳍鲨</td>
-                <td class='price'>¥3387</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td style="color: #dc3545; font-weight: bold;">大洋潜水</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥3137</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">三潜社</td>
-                <td class='price'>¥3387</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >白鳍鲨</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥3387</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">岁老板</td>
-                <td class='price'>¥4888</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
-            <tr class='model-header'><td colspan='3'>📱 Teric</td></tr>
-            <tr>
-                <td style="color: #dc3545; font-weight: bold;">大洋潜水</td>
-                <td class='price'>¥6184</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >三潜社</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥3387</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">塞班户外</td>
-                <td class='price'>¥6879</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >岁老板</td>
+                    <td>-</td>
+                    <td style="color: #dc3545; font-weight: bold;">¥4888</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">岁老板</td>
-                <td class='price'>¥6880</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+</tbody></table>
+
+        <div class="price-range">💰 价格区间: ¥6184 - ¥7295 (价差 ¥1112)</div>
+        
+
+        <table>
+            <thead>
+                <tr>
+                    <th>店铺</th>
+                    <th>SKU</th>
+                    <th>价格</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+        
+
+                <tr>
+                    <td style="color: #dc3545; font-weight: bold;">大洋潜水</td>
+                    <td>-</td>
+                    <td style="color: #28a745; font-weight: bold;">¥6184</td>
+                    <td><span class="badge badge-lowest">⭐ 最低价</span></td>
+                </tr>
             
-            <tr>
-                <td style="">白鳍鲨</td>
-                <td class='price'>¥6995</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >塞班户外</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥6879</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">三潜社</td>
-                <td class='price'>¥7295</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
-            <tr class='model-header'><td colspan='3'>📱 Tern</td></tr>
-            <tr>
-                <td style="color: #dc3545; font-weight: bold;">大洋潜水</td>
-                <td class='price'>¥3601</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >岁老板</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥6880</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">岁老板</td>
-                <td class='price'>¥3726</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >白鳍鲨</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥6995</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">白鳍鲨</td>
-                <td class='price'>¥3951</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >三潜社</td>
+                    <td>-</td>
+                    <td style="color: #dc3545; font-weight: bold;">¥7295</td>
+                    <td></td>
+                </tr>
             
-            <tr>
-                <td style="">塞班户外</td>
-                <td class='price'>¥3991</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+</tbody></table>
+
+        <div class="price-range">💰 价格区间: ¥3601 - ¥4391 (价差 ¥790)</div>
+        
+
+        <table>
+            <thead>
+                <tr>
+                    <th>店铺</th>
+                    <th>SKU</th>
+                    <th>价格</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody>
+        
+
+                <tr>
+                    <td style="color: #dc3545; font-weight: bold;">大洋潜水</td>
+                    <td>-</td>
+                    <td style="color: #28a745; font-weight: bold;">¥3601</td>
+                    <td><span class="badge badge-lowest">⭐ 最低价</span></td>
+                </tr>
             
-            <tr>
-                <td style="">三潜社</td>
-                <td class='price'>¥4391</td>
-                <td class='time'>2026-03-24 05:54</td>
-            </tr>
+
+                <tr>
+                    <td >岁老板</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥3726</td>
+                    <td></td>
+                </tr>
             
-            </tbody>
-        </table>
+
+                <tr>
+                    <td >白鳍鲨</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥3951</td>
+                    <td></td>
+                </tr>
+            
+
+                <tr>
+                    <td >塞班户外</td>
+                    <td>-</td>
+                    <td style="color: #333;">¥3991</td>
+                    <td></td>
+                </tr>
+            
+
+                <tr>
+                    <td >三潜社</td>
+                    <td>-</td>
+                    <td style="color: #dc3545; font-weight: bold;">¥4391</td>
+                    <td></td>
+                </tr>
+            
+</tbody></table>
         
         <div class="footer">
             数据来源: 淘宝价格监控系统 | 自动更新
