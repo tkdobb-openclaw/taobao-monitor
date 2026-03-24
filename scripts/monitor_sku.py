@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 淘宝价格监控 - SKU点击版（获取真实价格）
-- 直接点击配置的SKU获取价格
-- 失败时标记为需人工复核
+- 单浏览器连续检查所有商品
+- 前台展示便于调试
 """
 import asyncio
 import json
@@ -23,7 +23,10 @@ class SkuPriceMonitor:
         self.config = self._load_config()
         self._load_notifier_config()
         self.results = []
-        self.manual_review = []  # 需要人工复核的
+        self.manual_review = []
+        self.browser = None
+        self.context = None
+        self.page = None
     
     def _load_config(self):
         config_path = Path(__file__).parent.parent / "config.json"
@@ -38,25 +41,76 @@ class SkuPriceMonitor:
                 self.config['chat_id']
             )
     
-    async def fetch_sku_prices(self, page, url: str, target_skus: list) -> list:
-        """点击SKU获取价格，失败返回空列表"""
-        results = []
+    async def init_browser(self):
+        """初始化浏览器（前台展示）"""
+        auth_file = str(Path("~/.openclaw/workspace/skills/taobao-monitor/data/taobao_auth.json").expanduser())
+        
+        print("🌐 启动浏览器...")
+        p = await async_playwright().start()
+        self.playwright = p
+        
+        # 前台展示模式
+        self.browser = await p.chromium.launch(
+            headless=False,  # 前台展示
+            args=['--window-size=1400,900']
+        )
+        
+        self.context = await self.browser.new_context(
+            storage_state=auth_file,
+            viewport={'width': 1400, 'height': 900}
+        )
+        
+        self.page = await self.context.new_page()
+        print("✅ 浏览器已启动\n")
+    
+    async def close_browser(self):
+        """关闭浏览器"""
+        if self.browser:
+            await self.browser.close()
+        if self.playwright:
+            await self.playwright.stop()
+        print("\n🌐 浏览器已关闭")
+    
+    async def check_product(self, item_id: str, rule: dict) -> dict:
+        """检查单个商品（使用同一浏览器会话）"""
+        url = f"https://item.taobao.com/item.htm?id={item_id}"
+        shop = rule.get('shop', 'Unknown')
+        model = rule.get('model', 'Unknown')
+        target_skus = rule.get('target_skus', [])
+        
+        print(f"\n🔍 检查: {shop} - {model}")
+        print(f"   URL: {url}")
+        
+        result = {
+            'item_id': item_id,
+            'shop': shop,
+            'model': model,
+            'title': '',
+            'sku_prices': [],
+            'error': None
+        }
         
         try:
-            await page.goto(url, wait_until='domcontentloaded', timeout=30000)
-            await asyncio.sleep(5)  # 等待JS渲染
+            # 访问页面
+            await self.page.goto(url, wait_until='domcontentloaded', timeout=30000)
+            await asyncio.sleep(3)
             
-            # 检查是否需要登录
-            if 'login' in page.url:
-                return [{'error': '需要登录', 'need_login': True}]
+            # 检查登录状态
+            if 'login' in self.page.url:
+                result['error'] = '需要登录'
+                self.manual_review.append({'shop': shop, 'model': model, 'error': '需要登录'})
+                print(f"   ❌ 需要登录")
+                return result
+            
+            result['title'] = await self.page.title()
             
             # 移除遮罩层
-            await page.evaluate('''() => {
+            await self.page.evaluate('''() => {
                 document.querySelectorAll('.J_MIDDLEWARE_FRAME_WIDGET, [class*="overlay"]').forEach(el => el.remove());
             }''')
             
             # 获取所有SKU
-            sku_info = await page.evaluate('''() => {
+            sku_info = await self.page.evaluate('''() => {
                 const items = document.querySelectorAll('[class*="valueItem--"]');
                 return Array.from(items).map((el, i) => ({
                     index: i,
@@ -66,12 +120,11 @@ class SkuPriceMonitor:
             }''')
             
             if not sku_info:
-                return [{'error': '未找到SKU元素', 'debug': 'sku_info empty'}]
+                result['error'] = '未找到SKU元素'
+                print(f"   ❌ 未找到SKU元素")
+                return result
             
-            print(f"  找到 {len(sku_info)} 个SKU元素")
-            for s in sku_info[:3]:
-                print(f"    - {s['text']}")
-            
+            print(f"   找到 {len(sku_info)} 个SKU")
             found_skus = set()
             
             for sku in sku_info:
@@ -83,7 +136,9 @@ class SkuPriceMonitor:
                 # 匹配目标SKU
                 matched = None
                 for target in target_skus:
-                    if target.lower().replace(' ', '') in text.lower().replace(' ', ''):
+                    target_clean = target.lower().replace(' ', '')
+                    text_clean = text.lower().replace(' ', '')
+                    if target_clean in text_clean:
                         matched = target
                         break
                 
@@ -91,84 +146,74 @@ class SkuPriceMonitor:
                     continue
                 
                 found_skus.add(matched)
+                print(f"   ✅ 匹配: {matched[:20]}")
                 
-                # JS点击
-                await page.evaluate(f'(idx) => document.querySelectorAll(\'[class*="valueItem--"]\')[idx]?.click()', sku['index'])
-                await asyncio.sleep(5)  # 等待价格更新
+                # 点击SKU
+                await self.page.evaluate(
+                    f'(idx) => document.querySelectorAll(\'[class*="valueItem--"]\')[idx]?.click()', 
+                    sku['index']
+                )
+                await asyncio.sleep(4)  # 等待价格更新
                 
                 # 获取价格
-                price_text = await page.evaluate('''() => {
-                    const el = document.querySelector('[class*="priceText--"]');
-                    return el ? el.innerText : null;
+                price_text = await self.page.evaluate('''() => {
+                    const selectors = [
+                        '[class*="highlightPrice--"]',
+                        '[class*="priceWrap--"]',
+                        '.tb-rmb-num'
+                    ];
+                    for (let sel of selectors) {
+                        const el = document.querySelector(sel);
+                        if (el && el.innerText && (el.innerText.includes('¥') || el.innerText.includes('￥'))) {
+                            return el.innerText;
+                        }
+                    }
+                    return null;
                 }''')
                 
                 if price_text:
-                    match = re.search(r'([\d.]+)', price_text.replace(',', ''))
+                    match = re.search(r'([\d,]+\.?\d*)', price_text.replace(',', ''))
                     if match:
                         price = float(match.group(1))
-                        results.append({'sku': text, 'price': price, 'target': matched})
+                        result['sku_prices'].append({'sku': text, 'price': price, 'target': matched})
+                        print(f"      💰 ¥{price:.0f}")
             
-            return results
-            
-        except Exception as e:
-            return [{'error': str(e)}]
-    
-    async def check_product(self, item_id: str, rule: dict) -> dict:
-        """检查单个商品"""
-        url = f"https://item.taobao.com/item.htm?id={item_id}"
-        shop = rule.get('shop', 'Unknown')
-        model = rule.get('model', 'Unknown')
-        target_skus = rule.get('target_skus', [])
-        
-        print(f"\n检查: {shop} - {model}")
-        
-        auth_file = str(Path("~/.openclaw/workspace/skills/taobao-monitor/data/taobao_auth.json").expanduser())
-        
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            context = await browser.new_context(storage_state=auth_file)
-            page = await context.new_page()
-            
-            sku_prices = await self.fetch_sku_prices(page, url, target_skus)
-            title = await page.title()
-            
-            await browser.close()
-            
-            result = {
-                'item_id': item_id,
-                'shop': shop,
-                'model': model,
-                'title': title,
-                'sku_prices': [],
-                'error': None
-            }
-            
-            # 检查结果
-            if sku_prices and 'error' in sku_prices[0]:
-                result['error'] = sku_prices[0]['error']
-                self.manual_review.append({'shop': shop, 'model': model, 'error': sku_prices[0]['error']})
-                print(f"  ❌ 失败: {sku_prices[0]['error']}")
-            elif not sku_prices:
+            if not result['sku_prices']:
                 result['error'] = '未找到匹配的SKU'
                 self.manual_review.append({'shop': shop, 'model': model, 'error': '未找到匹配的SKU'})
-                print(f"  ❌ 失败: 未找到匹配的SKU")
-            else:
-                result['sku_prices'] = sku_prices
-                for sp in sku_prices:
-                    print(f"  ✅ {sp['sku'][:20]}... ¥{sp['price']:.0f}")
+                print(f"   ❌ 未找到匹配的SKU")
             
-            return result
+        except Exception as e:
+            result['error'] = str(e)
+            self.manual_review.append({'shop': shop, 'model': model, 'error': str(e)})
+            print(f"   ❌ 错误: {e}")
+        
+        return result
     
     async def run(self):
-        """执行监控"""
+        """执行监控（单浏览器连续检查）"""
         sku_rules = self.config.get('sku_rules', {})
-        print(f"开始监控: {len(sku_rules)} 个商品")
-        print(f"时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+        
+        print("="*60)
+        print(f"🚀 淘宝价格监控")
+        print(f"⏰ 开始时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+        print(f"📦 监控商品: {len(sku_rules)} 个")
         print("="*60)
         
-        for item_id, rule in sku_rules.items():
-            result = await self.check_product(item_id, rule)
-            self.results.append(result)
+        # 启动浏览器
+        await self.init_browser()
+        
+        try:
+            # 连续检查所有商品
+            for item_id, rule in sku_rules.items():
+                result = await self.check_product(item_id, rule)
+                self.results.append(result)
+                
+                # 每个商品间隔避免请求过快
+                await asyncio.sleep(2)
+        finally:
+            # 确保关闭浏览器
+            await self.close_browser()
         
         # 保存结果
         self.save_results()
@@ -176,21 +221,48 @@ class SkuPriceMonitor:
         # 发送报告
         self.send_report()
         
+        # 生成看板
+        print("\n📊 生成价格看板...")
+        try:
+            import subprocess
+            subprocess.run(['python3', 'scripts/generate_dashboard.py'], 
+                         cwd=Path(__file__).parent.parent, 
+                         capture_output=True)
+            print("✅ 看板已生成: docs/index.html")
+        except Exception as e:
+            print(f"⚠️ 看板生成失败: {e}")
+        
+        # 打印汇总
+        success_count = len([r for r in self.results if r['sku_prices']])
         print("\n" + "="*60)
-        print(f"监控完成! 成功: {len([r for r in self.results if r['sku_prices']])}/{len(self.results)}")
+        print(f"✅ 成功: {success_count}/{len(self.results)}")
         if self.manual_review:
-            print(f"需人工复核: {len(self.manual_review)} 个")
+            print(f"⚠️  需复核: {len(self.manual_review)} 个")
+        print("="*60)
     
     def save_results(self):
-        """保存结果到数据库"""
+        """保存结果到数据库和JSON文件"""
+        # 保存到数据库
         for r in self.results:
             if r['sku_prices']:
-                # 取第一个SKU价格保存
                 self.db.add_price(r['item_id'], r['sku_prices'][0]['price'], available=True)
+        
+        # 保存到JSON文件（供generate_report.py使用）
+        results_file = Path(__file__).parent.parent / "data" / "latest_results.json"
+        with open(results_file, 'w', encoding='utf-8') as f:
+            json.dump({
+                'time': datetime.now().isoformat(),
+                'results': self.results
+            }, f, ensure_ascii=False, indent=2)
+        print(f"💾 结果已保存: {results_file}")
     
     def send_report(self):
         """发送飞书报告"""
-        lines = ["📊 淘宝价格监控报告", f"时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}", ""]
+        lines = [
+            "📊 淘宝价格监控报告",
+            f"时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+            ""
+        ]
         
         # 按型号分组
         from collections import defaultdict
@@ -205,20 +277,21 @@ class SkuPriceMonitor:
             for item in items:
                 if item['sku_prices']:
                     for sp in item['sku_prices']:
-                        lines.append(f"  {item['shop']:8s} ¥{sp['price']:>6.0f} ({sp['sku'][:15]}...)")
-                elif not item['error']:
-                    lines.append(f"  {item['shop']:8s} 无数据")
+                        lines.append(f"  {item['shop']:8s} ¥{sp['price']:>6.0f}")
+                elif item['error']:
+                    lines.append(f"  {item['shop']:8s} ❌ {item['error']}")
         
         # 需人工复核
         if self.manual_review:
             lines.append("\n" + "="*40)
             lines.append("⚠️ 需人工复核:")
-            for item in self.manual_review:
+            for item in self.manual_review[:5]:
                 lines.append(f"  - {item['shop']} {item['model']}: {item['error']}")
         
         message = "\n".join(lines)
         self.notifier.send_text(message)
-        print("\n报告已发送")
+        print("\n📤 报告已发送")
+
 
 if __name__ == '__main__':
     monitor = SkuPriceMonitor()

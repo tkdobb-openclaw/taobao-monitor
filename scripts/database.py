@@ -136,6 +136,18 @@ class Database:
                 (product_id, price, original_price, available)
             )
     
+    def add_price(self, item_id: str, price: float, available: bool = True):
+        """通过 item_id 添加价格记录（兼容 monitor_sku.py）"""
+        product = self.get_product_by_item_id(item_id)
+        if product:
+            self.add_price_record(product.id, price, available=available)
+            self.update_product_price(product.id, price)
+        else:
+            # 如果商品不存在，创建一个基础记录
+            url = f"https://item.taobao.com/item.htm?id={item_id}"
+            product_id = self.add_product(url, item_id, title=None, target_price=None, note='')
+            self.add_price_record(product_id, price, available=available)
+    
     def get_price_history(self, product_id: int, days: int = 7) -> List[PriceRecord]:
         """获取价格历史"""
         with sqlite3.connect(self.db_path) as conn:
