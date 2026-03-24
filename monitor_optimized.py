@@ -12,7 +12,7 @@ from pathlib import Path
 from datetime import datetime
 from playwright.async_api import async_playwright
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent / 'scripts'))
 from database import Database
 from notifier import FeishuNotifier
 
@@ -29,7 +29,7 @@ class SkuPriceMonitor:
         self.page = None
     
     def _load_config(self):
-        config_path = Path(__file__).parent.parent / "config.json"
+        config_path = Path(__file__).parent / "config.json"
         with open(config_path, 'r', encoding='utf-8') as f:
             return json.load(f)
     
