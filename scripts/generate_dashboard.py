@@ -1,321 +1,501 @@
 #!/usr/bin/env python3
 """
-生成价格监控看板 HTML
-- 保留原有结构
-- 只添加颜色：大洋潜水红色、价格绿红黑、最低价标签
+可视化价格监控看板生成器 - 带价格变化趋势
 """
-import sqlite3
 import json
+import sqlite3
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from collections import defaultdict
 
-DB_PATH = Path(__file__).parent.parent / "data" / "monitor.db"
-DOCS_PATH = Path(__file__).parent.parent / "docs"
-CONFIG_PATH = Path(__file__).parent.parent / "config.json"
-
-def load_config():
-    with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
-def get_price_data():
-    config = load_config()
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+def load_all_price_history(logs_dir):
+    """加载所有历史价格数据"""
+    history = defaultdict(lambda: defaultdict(list))  # model -> shop -> [(date, price)]
     
-    data = {}
-    shops_sql = """
-        SELECT '676780234187' as item_id, '大洋潜水' as shop, 'Perdix' as model
-        UNION SELECT '676463247224', '塞班户外', 'Perdix'
-        UNION SELECT '544005716799', '白鳍鲨', 'Perdix'
-        UNION SELECT '675444560376', '岁老板', 'Perdix'
-        UNION SELECT '632230014333', '三潜社', 'Perdix'
-        UNION SELECT '623907417709', '大洋潜水', 'Peregrine'
-        UNION SELECT '624281587175', '塞班户外', 'Peregrine'
-        UNION SELECT '623777445212', '白鳍鲨', 'Peregrine'
-        UNION SELECT '626899529012', '岁老板', 'Peregrine'
-        UNION SELECT '988652922548', '三潜社', 'Peregrine'
-        UNION SELECT '584863170468', '大洋潜水', 'Teric'
-        UNION SELECT '575523804132', '塞班户外', 'Teric'
-        UNION SELECT '570722701118', '白鳍鲨', 'Teric'
-        UNION SELECT '667904575973', '岁老板', 'Teric'
-        UNION SELECT '629563113404', '三潜社', 'Teric'
-        UNION SELECT '753330765355', '大洋潜水', 'Tern'
-        UNION SELECT '756509652959', '塞班户外', 'Tern'
-        UNION SELECT '753672216139', '白鳍鲨', 'Tern'
-        UNION SELECT '749763697229', '岁老板', 'Tern'
-        UNION SELECT '899733746263', '三潜社', 'Tern'
-    """
-    
-    cursor = conn.execute(f"""
-        SELECT p.item_id, h.price, h.timestamp, s.shop, s.model
-        FROM price_history h
-        JOIN products p ON h.product_id = p.id
-        JOIN ({shops_sql}) s ON p.item_id = s.item_id
-        WHERE h.timestamp = (
-            SELECT MAX(timestamp) FROM price_history WHERE product_id = p.id
-        )
-    """)
-    
-    for row in cursor.fetchall():
-        data[row['item_id']] = {
-            'shop': row['shop'],
-            'model': row['model'],
-            'price': row['price'],
-            'timestamp': row['timestamp']
-        }
-    
-    conn.close()
-    return data
-
-def load_latest_results():
-    """从 latest_results.json 加载详细SKU数据"""
-    results_file = Path(__file__).parent.parent / "data" / "latest_results.json"
-    if results_file.exists():
-        with open(results_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            # 按店铺+型号作为key
-            results = {}
-            for r in data.get('results', []):
-                key = f"{r.get('shop', '')}-{r.get('model', '')}"
-                results[key] = r
-            return results
-    return {}
-
-def generate_html(data):
-    # 加载详细结果（包含SKU信息）
-    latest_results = load_latest_results()
-    config = load_config()
-    
-    # 按型号分组（区分 TX 版本）
-    by_model = defaultdict(list)
-    for item_id, info in data.items():
-        shop = info['shop']
-        base_model = info['model']
-        
-        # 从 latest_results 获取SKU详情
-        key = f"{shop}-{base_model}"
-        result = latest_results.get(key, {})
-        
-        # 获取所有SKU（区分 TX 版本）
-        def add_sku(sku_name, price, is_tx=False):
-            if is_tx or 'TX' in sku_name.upper():
-                model_name = f"{base_model} TX"
-            else:
-                model_name = base_model
-            by_model[model_name].append({
-                'shop': shop,
-                'sku': sku_name,
-                'price': price,
-                'timestamp': info['timestamp']
-            })
-        
-        # 从 latest_results 获取SKU
-        has_skus = False
-        for sku in result.get('skus', []):
-            sku_name = sku.get('name', '-')
-            price = sku.get('price', info['price'])
-            add_sku(sku_name, price, is_tx=False)
-            has_skus = True
+    for log_file in sorted(logs_dir.glob("prices_*.json")):
+        try:
+            with open(log_file, 'r') as f:
+                data = json.load(f)
             
-        for sku in result.get('skus_tx', []):
-            sku_name = sku.get('name', '-')
-            price = sku.get('price', info['price'])
-            add_sku(sku_name, price, is_tx=True)
-            has_skus = True
-        
-        # 如果没有SKU详情，从配置获取目标SKU
-        if not has_skus:
-            rule = config.get('sku_rules', {}).get(item_id, {})
-            target_skus = rule.get('target_skus', ['-'])
-            for sku_name in target_skus:
-                add_sku(sku_name, info['price'])
-    
-    # 生成表格行
-    rows = ""
-    # 按顺序显示型号
-    model_order = ['Perdix', 'Peregrine', 'Peregrine TX', 'Teric', 'Tern', 'Tern TX']
-    for model in model_order:
-        if model not in by_model:
+            timestamp = data.get('time', '')
+            if not timestamp:
+                continue
+            
+            date_str = timestamp[:10] if isinstance(timestamp, str) else timestamp.strftime('%Y-%m-%d')
+            
+            for item in data.get('results', []):
+                shop = item.get('shop', '')
+                model = item.get('model', '')
+                
+                # 普通版价格（取平均）
+                skus = item.get('skus', [])
+                if skus:
+                    avg_price = sum(s['price'] for s in skus) / len(skus)
+                    history[model][shop].append({
+                        'date': date_str,
+                        'price': avg_price,
+                        'type': '普通版'
+                    })
+                
+                # TX版价格
+                skus_tx = item.get('skus_tx', [])
+                if skus_tx:
+                    avg_price_tx = sum(s['price'] for s in skus_tx) / len(skus_tx)
+                    history[f"{model} TX"][shop].append({
+                        'date': date_str,
+                        'price': avg_price_tx,
+                        'type': 'TX版'
+                    })
+        except Exception as e:
             continue
-        
-        items = by_model[model]
-        prices = [i['price'] for i in items]
-        min_price = min(prices)
-        max_price = max(prices)
-        
-        rows += f"<tr class='model-header'><td colspan='4'>📱 {model}</td></tr>"
-        
-        for info in sorted(items, key=lambda x: x['price']):
-            shop = info['shop']
-            sku = info['sku']
-            price = info['price']
-            
-            # 店铺样式：大洋潜水红色
-            if shop == '大洋潜水':
-                shop_html = f'<span style="color: #dc3545; font-weight: bold;">{shop}</span>'
-            else:
-                shop_html = shop
-            
-            # 价格样式：最低绿、最高红、其他黑
-            if price == min_price:
-                price_html = f'<span style="color: #28a745; font-weight: bold;">¥{price:.0f}</span> <span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 4px; font-size: 11px;">最低价</span>'
-            elif price == max_price:
-                price_html = f'<span style="color: #dc3545; font-weight: bold;">¥{price:.0f}</span>'
-            else:
-                price_html = f'<span style="color: #333;">¥{price:.0f}</span>'
-            
-            rows += f"""
-            <tr>
-                <td>{shop_html}</td>
-                <td style="font-size: 12px; color: #666;">{sku[:25]}{'...' if len(sku) > 25 else ''}</td>
-                <td>{price_html}</td>
-                <td class='time'>{info['timestamp'][:16]}</td>
-            </tr>
-            """
     
-    html = f"""<!DOCTYPE html>
+    return history
+
+def get_price_change(current, previous):
+    """计算价格变化"""
+    if not current or not previous:
+        return None, None
+    change = current - previous
+    percent = (change / previous) * 100 if previous else 0
+    return change, percent
+
+def generate_dashboard():
+    """生成HTML看板"""
+    
+    db_path = Path(__file__).parent.parent / "data" / "monitor.db"
+    logs_dir = Path(__file__).parent.parent / "logs"
+    
+    # 加载历史数据
+    price_history = load_all_price_history(logs_dir)
+    
+    # 获取最新数据
+    latest_file = max(logs_dir.glob("prices_*.json"), key=lambda x: x.stat().st_mtime)
+    with open(latest_file, 'r') as f:
+        latest_data = json.load(f)
+    
+    latest_time = latest_data.get('time', '')
+    if isinstance(latest_time, str):
+        latest_time = latest_time[:16].replace('T', ' ')
+    
+    # 获取昨日数据（如果有）
+    yesterday_file = None
+    today = datetime.now().date()
+    for log_file in sorted(logs_dir.glob("prices_*.json"), reverse=True):
+        file_date = datetime.fromtimestamp(log_file.stat().st_mtime).date()
+        if file_date < today:
+            yesterday_file = log_file
+            break
+    
+    yesterday_data = {}
+    if yesterday_file:
+        with open(yesterday_file, 'r') as f:
+            yd = json.load(f)
+            for item in yd.get('results', []):
+                key = f"{item['shop']}_{item['model']}"
+                skus = item.get('skus', [])
+                if skus:
+                    yesterday_data[key] = sum(s['price'] for s in skus) / len(skus)
+    
+    # 整理今日数据
+    today_data = {}
+    model_shops = defaultdict(dict)
+    
+    for item in latest_data.get('results', []):
+        shop = item.get('shop', '')
+        model = item.get('model', '')
+        key = f"{shop}_{model}"
+        
+        skus = item.get('skus', [])
+        if skus:
+            today_price = sum(s['price'] for s in skus) / len(skus)
+            today_data[key] = today_price
+            model_shops[model][shop] = {
+                'today': today_price,
+                'yesterday': yesterday_data.get(key, None),
+                'skus': skus
+            }
+        
+        # TX版
+        skus_tx = item.get('skus_tx', [])
+        if skus_tx:
+            today_price_tx = sum(s['price'] for s in skus_tx) / len(skus_tx)
+            model_shops[f"{model} TX"][shop] = {
+                'today': today_price_tx,
+                'yesterday': None,
+                'skus': skus_tx
+            }
+    
+    # 生成HTML
+    html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>淘宝价格监控 - Shearwater 潜水表</title>
+    <title>🤿 潜水装备价格监控看板</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
-        }}
-        .container {{
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }}
-        .header {{
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }}
-        .header h1 {{ font-size: 24px; margin-bottom: 10px; }}
-        .header .update-time {{ opacity: 0.9; font-size: 14px; }}
-        .stats {{
-            display: flex;
-            justify-content: space-around;
+            min-height: 100vh;
             padding: 20px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
         }}
-        .stat {{
+        .container {{ max-width: 1400px; margin: 0 auto; }}
+        .header {{ text-align: center; color: white; margin-bottom: 30px; }}
+        .header h1 {{ font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }}
+        .header .subtitle {{ opacity: 0.9; font-size: 1.1em; }}
+        
+        .stats {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }}
+        .stat-card {{
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             text-align: center;
         }}
-        .stat-value {{
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
+        .stat-card .number {{ font-size: 2em; font-weight: bold; color: #667eea; }}
+        .stat-card .label {{ color: #666; margin-top: 5px; }}
+        
+        .change-summary {{
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }}
-        .stat-label {{
-            font-size: 12px;
-            color: #6c757d;
-            margin-top: 5px;
+        .change-summary h2 {{ margin-bottom: 15px; color: #333; }}
+        .change-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
         }}
-        table {{
+        .change-item {{
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }}
+        .change-up {{ background: #ffebee; color: #c62828; }}
+        .change-down {{ background: #e8f5e9; color: #2e7d32; }}
+        .change-flat {{ background: #f5f5f5; color: #616161; }}
+        .change-arrow {{ font-size: 1.5em; font-weight: bold; }}
+        .change-amount {{ font-size: 1.1em; font-weight: bold; }}
+        
+        .model-section {{
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }}
+        .model-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }}
+        .model-title {{ font-size: 1.5em; color: #333; display: flex; align-items: center; gap: 10px; }}
+        .price-range {{ color: #666; font-size: 0.9em; }}
+        
+        .price-table {{
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }}
-        th {{
+        .price-table th {{
             background: #f8f9fa;
-            padding: 15px;
+            padding: 12px;
             text-align: left;
             font-weight: 600;
-            color: #495057;
-            border-bottom: 2px solid #dee2e6;
+            color: #555;
+            border-bottom: 2px solid #e9ecef;
         }}
-        td {{
-            padding: 12px 15px;
+        .price-table td {{
+            padding: 12px;
             border-bottom: 1px solid #e9ecef;
         }}
-        tr:hover {{ background: #f8f9fa; }}
-        .model-header {{
-            background: #e9ecef;
-            font-weight: bold;
-            color: #495057;
+        .price-table tr:hover {{ background: #f8f9fa; }}
+        
+        .price {{ font-weight: bold; font-size: 1.1em; }}
+        .price-low {{ color: #28a745; }}
+        .price-high {{ color: #dc3545; }}
+        
+        .trend {{
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
         }}
-        .model-header td {{
-            padding: 10px 15px;
-            border-bottom: 2px solid #dee2e6;
-        }}
-        .time {{
-            color: #6c757d;
-            font-size: 12px;
-        }}
-        .footer {{
-            padding: 20px;
+        .trend-up {{ background: #ffebee; color: #c62828; }}
+        .trend-down {{ background: #e8f5e9; color: #2e7d32; }}
+        .trend-flat {{ background: #e3f2fd; color: #1565c0; }}
+        
+        .trend-icon {{ font-size: 1.2em; }}
+        
+        .chart-container {{ height: 300px; margin-top: 20px; }}
+        .update-time {{
             text-align: center;
-            color: #6c757d;
-            font-size: 12px;
+            color: white;
+            opacity: 0.8;
+            margin-top: 30px;
         }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 淘宝价格监控</h1>
-            <div class="update-time">更新时间: {datetime.now().strftime('%Y-%m-%d %H:%M')}</div>
+            <h1>🤿 Shearwater 潜水表价格监控</h1>
+            <div class="subtitle">实时监控淘宝/天猫价格变动 · 自动发现最低价</div>
         </div>
         
         <div class="stats">
-            <div class="stat">
-                <div class="stat-value">{len(data)}</div>
-                <div class="stat-label">监控商品</div>
+            <div class="stat-card">
+                <div class="number">20</div>
+                <div class="label">监控商品</div>
             </div>
-            <div class="stat">
-                <div class="stat-value">{len(by_model)}</div>
-                <div class="stat-label">型号类别</div>
+            <div class="stat-card">
+                <div class="number">{len(model_shops)}</div>
+                <div class="label">型号类别</div>
             </div>
-            <div class="stat">
-                <div class="stat-value">{min([i['price'] for i in data.values()]) if data else 0:.0f}</div>
-                <div class="stat-label">最低价格</div>
+            <div class="stat-card">
+                <div class="number">{len([m for m in model_shops.values() for s in m.values() if s.get('yesterday')])}</div>
+                <div class="label">有昨日对比</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{latest_time}</div>
+                <div class="label">最后更新</div>
             </div>
         </div>
+'''
+    
+    # 价格变化汇总
+    changes = []
+    for model, shops in model_shops.items():
+        for shop, data in shops.items():
+            if data.get('yesterday'):
+                change, percent = get_price_change(data['today'], data['yesterday'])
+                if change:
+                    changes.append({
+                        'model': model,
+                        'shop': shop,
+                        'change': change,
+                        'percent': percent,
+                        'today': data['today'],
+                        'yesterday': data['yesterday']
+                    })
+    
+    if changes:
+        html += '''
+        <div class="change-summary">
+            <h2>📈 今日价格变化</h2>
+            <div class="change-grid">
+'''
+        for c in sorted(changes, key=lambda x: abs(x['change']), reverse=True)[:8]:
+            change_class = 'change-up' if c['change'] > 0 else 'change-down' if c['change'] < 0 else 'change-flat'
+            arrow = '↑' if c['change'] > 0 else '↓' if c['change'] < 0 else '→'
+            html += f'''
+                <div class="change-item {change_class}">
+                    <div>
+                        <strong>{c['model']}</strong> - {c['shop']}<br>
+                        <small>¥{c['yesterday']:,.0f} → ¥{c['today']:,.0f}</small>
+                    </div>
+                    <div class="change-amount">
+                        <span class="change-arrow">{arrow}</span>
+                        ¥{abs(c['change']):,.0f} ({c['percent']:+.1f}%)
+                    </div>
+                </div>
+'''
+        html += '''
+            </div>
+        </div>
+'''
+    
+    # 为每个型号生成表格
+    colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe']
+    
+    for idx, (model, shops) in enumerate(sorted(model_shops.items())):
+        color = colors[idx % len(colors)]
         
-        <table>
-            <thead>
-                <tr>
-                    <th>店铺</th>
-                    <th>SKU</th>
-                    <th>价格</th>
-                    <th>更新时间</th>
-                </tr>
-            </thead>
-            <tbody>
-                {rows}
-            </tbody>
-        </table>
+        # 计算价格范围
+        prices = [s['today'] for s in shops.values()]
+        min_price = min(prices) if prices else 0
+        max_price = max(prices) if prices else 0
         
-        <div class="footer">
-            数据来源: 淘宝价格监控系统 | 自动更新
+        html += f'''
+        <div class="model-section">
+            <div class="model-header">
+                <div class="model-title">
+                    <span>⌚</span>
+                    <span>Shearwater {model}</span>
+                </div>
+                <div class="price-range">
+                    价格区间: ¥{min_price:,.0f} - ¥{max_price:,.0f} (价差 ¥{max_price-min_price:,.0f})
+                </div>
+            </div>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>店铺</th>
+                        <th>当前价格</th>
+                        <th>较昨日</th>
+                        <th>历史趋势</th>
+                    </tr>
+                </thead>
+                <tbody>
+'''
+        
+        chart_data = []
+        for shop_name in sorted(shops.keys(), key=lambda x: shops[x]['today']):
+            shop_data = shops[shop_name]
+            today_price = shop_data['today']
+            yesterday_price = shop_data.get('yesterday')
+            
+            # 价格样式
+            is_lowest = (today_price == min_price)
+            price_class = 'price-low' if is_lowest else 'price-high' if today_price == max_price else ''
+            price_display = f'¥{today_price:,.0f} {"⭐" if is_lowest else ""}'
+            
+            # 涨跌显示
+            if yesterday_price:
+                change, percent = get_price_change(today_price, yesterday_price)
+                if change > 0:
+                    trend = f'<span class="trend trend-up"><span class="trend-icon">📈</span> +¥{change:,.0f} (+{percent:.1f}%)</span>'
+                elif change < 0:
+                    trend = f'<span class="trend trend-down"><span class="trend-icon">📉</span> -¥{abs(change):,.0f} ({percent:.1f}%)</span>'
+                else:
+                    trend = '<span class="trend trend-flat"><span class="trend-icon">➡️</span> 持平</span>'
+            else:
+                trend = '<span class="trend trend-flat">无数据</span>'
+            
+            # 历史趋势
+            history_key = model.replace(' TX', '')
+            if history_key in price_history and shop_name in price_history[history_key]:
+                hist = price_history[history_key][shop_name]
+                if len(hist) >= 2:
+                    trend_text = f"近{len(hist)}天记录"
+                else:
+                    trend_text = "数据不足"
+                chart_data.append({
+                    'label': shop_name,
+                    'data': hist,
+                    'color': color
+                })
+            else:
+                trend_text = "-"
+            
+            html += f'''
+                    <tr>
+                        <td><strong>{shop_name}</strong></td>
+                        <td class="price {price_class}">{price_display}</td>
+                        <td>{trend}</td>
+                        <td>{trend_text}</td>
+                    </tr>
+'''
+        
+        html += '''
+                </tbody>
+            </table>
+'''
+        
+        # 添加趋势图
+        if chart_data:
+            chart_id = f"chart_{model.replace(' ', '_').replace('/', '_')}"
+            # 获取所有日期
+            all_dates = sorted(set(
+                d['date'] for cd in chart_data for d in cd['data']
+            ))[-10:]  # 最近10天
+            
+            html += f'''
+            <div class="chart-container">
+                <canvas id="{chart_id}"></canvas>
+            </div>
+            <script>
+                (function() {{
+                    const ctx = document.getElementById('{chart_id}').getContext('2d');
+                    new Chart(ctx, {{
+                        type: 'line',
+                        data: {{
+                            labels: {all_dates},
+                            datasets: [
+'''
+            for i, cd in enumerate(chart_data[:5]):
+                # 按日期整理数据
+                price_by_date = {d['date']: d['price'] for d in cd['data']}
+                prices = [price_by_date.get(d, None) for d in all_dates]
+                
+                html += f'''                                {{
+                                    label: '{cd['label']}',
+                                    data: {prices},
+                                    borderColor: '{colors[i % len(colors)]}',
+                                    backgroundColor: '{colors[i % len(colors)]}20',
+                                    tension: 0.4,
+                                    fill: false,
+                                    spanGaps: true
+                                }}{',' if i < len(chart_data[:5])-1 else ''}
+'''
+            
+            html += f'''                            ]
+                        }},
+                        options: {{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {{
+                                title: {{
+                                    display: true,
+                                    text: '{model} 价格趋势 (最近10天)'
+                                }}
+                            }},
+                            scales: {{
+                                y: {{
+                                    beginAtZero: false,
+                                    ticks: {{
+                                        callback: function(value) {{
+                                            return '¥' + value.toLocaleString();
+                                        }}
+                                    }}
+                                }}
+                            }}
+                        }}
+                    }});
+                }})();
+            </script>
+'''
+        
+        html += '''        </div>
+'''
+    
+    html += f'''
+        <div class="update-time">
+            最后更新: {latest_time} | 数据自动同步中
         </div>
     </div>
 </body>
-</html>"""
-    return html
-
-def main():
-    print("📊 生成价格看板...")
-    DOCS_PATH.mkdir(exist_ok=True)
-    data = get_price_data()
-    html = generate_html(data)
+</html>
+'''
     
-    with open(DOCS_PATH / "index.html", 'w', encoding='utf-8') as f:
+    # 保存HTML文件
+    output_path = Path(__file__).parent.parent / "dashboard.html"
+    with open(output_path, 'w', encoding='utf-8') as f:
         f.write(html)
     
-    print(f"✅ 看板已生成: {DOCS_PATH / 'index.html'}")
-    print(f"📈 共 {len(data)} 个商品价格")
+    print(f"✅ 看板已生成: {output_path}")
+    print(f"   - 包含价格变化趋势")
+    print(f"   - 显示涨跌对比 (📈📉)")
+    print(f"   - 历史价格图表")
+    return output_path
 
 if __name__ == '__main__':
-    main()
+    generate_dashboard()

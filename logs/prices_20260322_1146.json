@@ -1,0 +1,27 @@
+{
+  "time": "2026-03-22T11:46:00",
+  "total": 20,
+  "success": 20,
+  "results": [
+    {"shop": "大洋潜水", "model": "Perdix", "skus": [{"name": "perdix2 ti 银色", "price": 7281, "shop": "大洋潜水"}], "skus_tx": []},
+    {"shop": "塞班户外", "model": "Perdix", "skus": [{"name": "PERDIX 2 Ti/银色/", "price": 7281, "shop": "塞班户外"}], "skus_tx": []},
+    {"shop": "白鳍鲨", "model": "Perdix", "skus": [{"name": "PERDIX 2 Ti BLACK", "price": 7641, "shop": "白鳍鲨"}], "skus_tx": []},
+    {"shop": "岁老板", "model": "Perdix", "skus": [{"name": "Ti Black（钛黑版）", "price": 7046, "shop": "岁老板"}], "skus_tx": []},
+    {"shop": "三潜社", "model": "Perdix", "skus": [{"name": "PERDIX 2 Ti BLACK", "price": 7281, "shop": "三潜社"}], "skus_tx": []},
+    {"shop": "大洋潜水", "model": "Peregrine", "skus": [{"name": "Peregrine 灰色", "price": 3457, "shop": "大洋潜水"}], "skus_tx": [{"name": "Peregrine TX 需预定", "price": 4335, "shop": "大洋潜水"}]},
+    {"shop": "塞班户外", "model": "Peregrine", "skus": [{"name": "黑色经典版", "price": 3351, "shop": "塞班户外"}, {"name": "灰色 DARK", "price": 3351, "shop": "塞班户外"}], "skus_tx": [{"name": "黑色 TX 版", "price": 4399, "shop": "塞班户外"}]},
+    {"shop": "白鳍鲨", "model": "Peregrine", "skus": [{"name": "peregrine黑色", "price": 3771, "shop": "白鳍鲨"}], "skus_tx": [{"name": "peregrine TX黑色（可配传感器）", "price": 5211, "shop": "白鳍鲨"}]},
+    {"shop": "岁老板", "model": "Peregrine", "skus": [{"name": "普通版黑蓝色", "price": 3643, "shop": "岁老板"}], "skus_tx": [{"name": "TX版黑色", "price": 4888, "shop": "岁老板"}]},
+    {"shop": "三潜社", "model": "Peregrine", "skus": [{"name": "peregrine黑色", "price": 3771, "shop": "三潜社"}], "skus_tx": [{"name": "peregrine TX黑色（可配传感器）", "price": 5211, "shop": "三潜社"}]},
+    {"shop": "大洋潜水", "model": "Teric", "skus": [{"name": "浅灰色", "price": 7256, "shop": "大洋潜水"}], "skus_tx": []},
+    {"shop": "塞班户外", "model": "Teric", "skus": [{"name": "黑盘黑表带", "price": 7046, "shop": "塞班户外"}], "skus_tx": []},
+    {"shop": "白鳍鲨", "model": "Teric", "skus": [{"name": "黑色", "price": 7461, "shop": "白鳍鲨"}], "skus_tx": []},
+    {"shop": "岁老板", "model": "Teric", "skus": [{"name": "黑色", "price": 6880, "shop": "岁老板"}], "skus_tx": []},
+    {"shop": "三潜社", "model": "Teric", "skus": [{"name": "黑色", "price": 7461, "shop": "三潜社"}], "skus_tx": []},
+    {"shop": "大洋潜水", "model": "Tern", "skus": [{"name": "Tern", "price": 4101, "shop": "大洋潜水"}], "skus_tx": [{"name": "Tern TX", "price": 5391, "shop": "大洋潜水"}]},
+    {"shop": "塞班户外", "model": "Tern", "skus": [{"name": "TERN New", "price": 3991, "shop": "塞班户外"}], "skus_tx": [{"name": "TERN TX【可另配传感器】", "price": 5391, "shop": "塞班户外"}]},
+    {"shop": "白鳍鲨", "model": "Tern", "skus": [{"name": "TERN", "price": 4491, "shop": "白鳍鲨"}], "skus_tx": [{"name": "TERN TX (可另配传感器）", "price": 5991, "shop": "白鳍鲨"}]},
+    {"shop": "岁老板", "model": "Tern", "skus": [{"name": "TERN 银色（现货）", "price": 3726, "shop": "岁老板"}], "skus_tx": [{"name": "TERN TX 黑色（现货）", "price": 4971, "shop": "岁老板"}]},
+    {"shop": "三潜社", "model": "Tern", "skus": [{"name": "TERN", "price": 4991, "shop": "三潜社"}], "skus_tx": [{"name": "TERN TX", "price": 5991, "shop": "三潜社"}]}
+  ]
+}

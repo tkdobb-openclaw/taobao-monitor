@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "name": "taobao-monitor-dashboard",
+  "public": true,
+  "github": {
+    "enabled": false
+  }
+}

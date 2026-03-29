@@ -3,214 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shearwater 潜水表价格监控</title>
+    <title>潜水装备价格监控 - 2026-03-29</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
+        body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
         }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        .header {
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header .date { opacity: 0.9; font-size: 1.1em; }
+        .stats { 
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card { 
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             text-align: center;
         }
-        .header h1 { font-size: 24px; margin-bottom: 10px; }
-        .header .update-time { opacity: 0.9; font-size: 14px; }
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
-        }
-        .stat { text-align: center; }
-        .stat-value { font-size: 24px; font-weight: bold; color: #667eea; }
-        .stat-label { font-size: 12px; color: #6c757d; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; }
-        th {
-            background: #f8f9fa;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #495057;
-            border-bottom: 2px solid #dee2e6;
-        }
-        td { padding: 12px 15px; border-bottom: 1px solid #e9ecef; }
-        tr:hover { background: #f8f9fa; }
-        .model-header {
-            background: #e9ecef;
+        .stat-card .number { 
+            font-size: 2.5em;
             font-weight: bold;
-            color: #495057;
+            color: #667eea;
         }
-        .model-header td { padding: 10px 15px; border-bottom: 2px solid #dee2e6; }
-        .time { color: #6c757d; font-size: 12px; }
-        .footer { padding: 20px; text-align: center; color: #6c757d; font-size: 12px; }
-        .note { background: #fff3cd; padding: 10px 15px; font-size: 13px; color: #856404; }
+        .stat-card .label { color: #666; margin-top: 5px; }
+        .section { 
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .section h2 { 
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: inline-block;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { 
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th { 
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+        tr:hover { background: #f8f9fa; }
+        .lowest { 
+            background: #d4edda !important;
+            color: #155724;
+            font-weight: bold;
+        }
+        .lowest::after {
+            content: " ⭐";
+        }
+        .brand-shearwater { border-left: 4px solid #667eea; }
+        .brand-apollo { border-left: 4px solid #f093fb; }
+        .footer { 
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Shearwater 潜水表价格监控</h1>
-            <div class="update-time">更新时间: 2026-03-28 16:06</div>
+            <h1>🤿 潜水装备价格监控</h1>
+            <div class="date">更新时间：2026年3月29日</div>
         </div>
-        
-        <div class="note">💡 数据来源: 用户每日截图 → AI分析 → 自动更新 | Peregrine颜色已合并</div>
-        
+
         <div class="stats">
-            <div class="stat">
-                <div class="stat-value">15</div>
-                <div class="stat-label">今日更新SKU</div>
+            <div class="stat-card">
+                <div class="number">23</div>
+                <div class="label">监控 SKU</div>
             </div>
-            <div class="stat">
-                <div class="stat-value">6</div>
-                <div class="stat-label">型号类别</div>
+            <div class="stat-card">
+                <div class="number">10</div>
+                <div class="label">型号类别</div>
             </div>
-            <div class="stat">
-                <div class="stat-value">¥3,133</div>
-                <div class="stat-label">今日最低价</div>
+            <div class="stat-card">
+                <div class="number">¥1,035</div>
+                <div class="label">今日最低</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">3</div>
+                <div class="label">监控店铺</div>
             </div>
         </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>店铺</th>
-                    <th>SKU</th>
-                    <th>价格</th>
-                    <th>更新时间</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class='model-header'><td colspan='4'>📱 Perdix 2 Ti（新增）</td></tr>
-                <tr>
-                    <td><span style="color: #dc3545; font-weight: bold;">大洋潜水</span></td>
-                    <td style="font-size: 12px; color: #666;">Perdix2 Ti</td>
-                    <td><span style="color: #28a745; font-weight: bold;">¥6,322</span> <span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 4px; font-size: 11px;">最低</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>塞班户外</td>
-                    <td style="font-size: 12px; color: #666;">Perdix2 Ti</td>
-                    <td><span style="color: #333;">¥6,885</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>岁老板</td>
-                    <td style="font-size: 12px; color: #666;">Teric</td>
-                    <td><span style="color: #333;">¥7,055</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
 
-                <tr class='model-header'><td colspan='4'>📱 Peregrine（颜色合并）</td></tr>
-                <tr>
-                    <td><span style="color: #28a745; font-weight: bold;">塞班户外</span></td>
-                    <td style="font-size: 12px; color: #666;">Peregrine DARK</td>
-                    <td><span style="color: #28a745; font-weight: bold;">¥3,133</span> <span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 4px; font-size: 11px;">最低</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td><span style="color: #dc3545; font-weight: bold;">大洋潜水</span></td>
-                    <td style="font-size: 12px; color: #666;">Peregrine</td>
-                    <td><span style="color: #333;">¥3,146</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>岁老板</td>
-                    <td style="font-size: 12px; color: #666;">Peregrine</td>
-                    <td><span style="color: #333;">¥3,652</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
+        <div class="section brand-shearwater">
+            <h2>⌚ Shearwater 潜水表</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>塞班户外</th>
+                        <th>三潜社</th>
+                        <th>岁老板</th>
+                        <th>大洋潜水</th>
+                        <th>🟢 最低</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Perdix 2 Ti</td>
+                        <td>¥6,885</td>
+                        <td>-</td>
+                        <td>¥7,055</td>
+                        <td class="lowest">¥6,322</td>
+                        <td>大洋 ⭐</td>
+                    </tr>
+                    <tr>
+                        <td>Peregrine</td>
+                        <td class="lowest">¥3,133</td>
+                        <td>-</td>
+                        <td>¥3,652</td>
+                        <td>¥3,146</td>
+                        <td>塞班 ⭐</td>
+                    </tr>
+                    <tr>
+                        <td>Peregrine TX</td>
+                        <td>¥4,408</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td class="lowest">¥4,344</td>
+                        <td>大洋 ⭐</td>
+                    </tr>
+                    <tr>
+                        <td>Tern</td>
+                        <td>¥4,000</td>
+                        <td>-</td>
+                        <td>¥3,735</td>
+                        <td class="lowest">¥3,610</td>
+                        <td>大洋 ⭐</td>
+                    </tr>
+                    <tr>
+                        <td>Tern TX</td>
+                        <td>¥5,400</td>
+                        <td>-</td>
+                        <td>¥4,980</td>
+                        <td class="lowest">¥4,565</td>
+                        <td>大洋 ⭐</td>
+                    </tr>
+                    <tr>
+                        <td>Teric</td>
+                        <td>¥6,888</td>
+                        <td>-</td>
+                        <td>¥7,055</td>
+                        <td class="lowest">¥6,192</td>
+                        <td>大洋 ⭐</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-                <tr class='model-header'><td colspan='4'>📱 Peregrine TX（单独列出）</td></tr>
-                <tr>
-                    <td><span style="color: #dc3545; font-weight: bold;">大洋潜水</span></td>
-                    <td style="font-size: 12px; color: #666;">Peregrine TX</td>
-                    <td><span style="color: #28a745; font-weight: bold;">¥4,344</span> <span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 4px; font-size: 11px;">最低</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>塞班户外</td>
-                    <td style="font-size: 12px; color: #666;">Peregrine TX</td>
-                    <td><span style="color: #333;">¥4,408</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
+        <div class="section brand-apollo">
+            <h2>🥽 Apollo 面镜</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>塞班户外</th>
+                        <th>三潜社</th>
+                        <th>大洋潜水</th>
+                        <th>🟢 最低</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>铝合金</td>
+                        <td>¥1,055</td>
+                        <td>¥1,056</td>
+                        <td class="lowest">¥1,035</td>
+                        <td>大洋 ⭐</td>
+                    </tr>
+                    <tr>
+                        <td>不锈钢 黑色</td>
+                        <td>¥2,376</td>
+                        <td>¥2,376</td>
+                        <td class="lowest">¥2,070</td>
+                        <td>大洋 ⭐</td>
+                    </tr>
+                    <tr>
+                        <td>不锈钢 银色</td>
+                        <td>¥2,112</td>
+                        <td>¥2,376</td>
+                        <td class="lowest">¥2,032</td>
+                        <td>大洋 ⭐</td>
+                    </tr>
+                    <tr>
+                        <td>不锈钢 金色</td>
+                        <td>¥2,244</td>
+                        <td class="lowest">¥2,094</td>
+                        <td>¥2,253</td>
+                        <td>三潜社 ⭐</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-                <tr class='model-header'><td colspan='4'>📱 Tern</td></tr>
-                <tr>
-                    <td><span style="color: #dc3545; font-weight: bold;">大洋潜水</span></td>
-                    <td style="font-size: 12px; color: #666;">Tern</td>
-                    <td><span style="color: #28a745; font-weight: bold;">¥3,610</span> <span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 4px; font-size: 11px;">最低</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>岁老板</td>
-                    <td style="font-size: 12px; color: #666;">Tern</td>
-                    <td><span style="color: #333;">¥3,735</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>塞班户外</td>
-                    <td style="font-size: 12px; color: #666;">Tern</td>
-                    <td><span style="color: #333;">¥4,000</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-
-                <tr class='model-header'><td colspan='4'>📱 Tern TX</td></tr>
-                <tr>
-                    <td><span style="color: #dc3545; font-weight: bold;">大洋潜水</span></td>
-                    <td style="font-size: 12px; color: #666;">Tern TX</td>
-                    <td><span style="color: #28a745; font-weight: bold;">¥4,565</span> <span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 4px; font-size: 11px;">最低</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>岁老板</td>
-                    <td style="font-size: 12px; color: #666;">Tern TX</td>
-                    <td><span style="color: #333;">¥4,980</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>塞班户外</td>
-                    <td style="font-size: 12px; color: #666;">Tern TX</td>
-                    <td><span style="color: #333;">¥5,400</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-
-                <tr class='model-header'><td colspan='4'>📱 Teric</td></tr>
-                <tr>
-                    <td><span style="color: #dc3545; font-weight: bold;">大洋潜水</span></td>
-                    <td style="font-size: 12px; color: #666;">Teric</td>
-                    <td><span style="color: #28a745; font-weight: bold;">¥6,192</span> <span style="background: #d4edda; color: #155724; padding: 2px 6px; border-radius: 4px; font-size: 11px;">最低</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>塞班户外</td>
-                    <td style="font-size: 12px; color: #666;">Teric</td>
-                    <td><span style="color: #333;">¥6,888</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-                <tr>
-                    <td>岁老板</td>
-                    <td style="font-size: 12px; color: #666;">Teric</td>
-                    <td><span style="color: #333;">¥7,055</span></td>
-                    <td class='time'>2026-03-28</td>
-                </tr>
-            </tbody>
-        </table>
-        
         <div class="footer">
-            数据来源: 淘宝价格监控系统 | 每日更新
+            <p>📊 数据更新时间：2026-03-29 23:00 | 监控店铺：塞班户外、三潜社、岁老板、大洋潜水</p>
+            <p>⚠️ 价格仅供参考，购买前请核实店铺最新价格</p>
         </div>
     </div>
 </body>
