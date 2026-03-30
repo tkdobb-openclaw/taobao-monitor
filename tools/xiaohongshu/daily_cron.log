@@ -1,0 +1,19 @@
+📊 [2026-03-23 08:00] 生成每日热点报告
+  🔍 检查: 潜水
+Traceback (most recent call last):
+  File "/Users/john/.openclaw/workspace/tools/xiaohongshu/xhs_daily_report.py", line 243, in <module>
+    main()
+  File "/Users/john/.openclaw/workspace/tools/xiaohongshu/xhs_daily_report.py", line 230, in main
+    report, md_file = monitor.generate_daily_report(keywords, min_likes=50)
+  File "/Users/john/.openclaw/workspace/tools/xiaohongshu/xhs_daily_report.py", line 43, in generate_daily_report
+    notes = self._quick_search(keyword)
+  File "/Users/john/.openclaw/workspace/tools/xiaohongshu/xhs_daily_report.py", line 143, in _quick_search
+    subprocess.run(cmd, capture_output=True)
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 505, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 951, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/subprocess.py", line 1821, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'npx'
+[2026-03-23 08:00:00] 每日监控完成
