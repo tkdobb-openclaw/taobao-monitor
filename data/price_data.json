@@ -1,0 +1,120 @@
+{
+  "update_time": "2026-04-02T12:00:00+08:00",
+  "data_source": "淘宝截图分析",
+  "categories": [
+    {
+      "name": "Apollo 自由潜面镜",
+      "products": [
+        {
+          "model": "Apollo 85cc 不锈钢金色 UV",
+          "prices": [
+            {"shop": "三潜社", "price": 2142, "original_price": 2380, "discount": "省238", "url": "", "verified": true},
+            {"shop": "大洋潜水中心", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "岁老闆", "price": null, "original_price": null, "discount": "", "url": "", "verified": false}
+          ],
+          "specs": {"volume": "85cc", "frame": "不锈钢", "color": "金色", "coating": "UV"}
+        },
+        {
+          "model": "Apollo 95cc 不锈钢黑银 UV AR",
+          "prices": [
+            {"shop": "三潜社", "price": 2430, "original_price": 2700, "discount": "省270", "url": "", "verified": true},
+            {"shop": "大洋潜水中心", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "岁老闆", "price": null, "original_price": null, "discount": "", "url": "", "verified": false}
+          ],
+          "specs": {"volume": "95cc", "frame": "不锈钢", "color": "黑银", "coating": "UV AR"}
+        },
+        {
+          "model": "Apollo 95cc 铝合金黑框黑胶",
+          "prices": [
+            {"shop": "三潜社", "price": 1080, "original_price": 1200, "discount": "省120", "url": "", "verified": true},
+            {"shop": "大洋潜水中心", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "岁老闆", "price": null, "original_price": null, "discount": "", "url": "", "verified": false}
+          ],
+          "specs": {"volume": "95cc", "frame": "铝合金", "color": "黑框黑胶", "coating": ""}
+        },
+        {
+          "model": "Apollo 60cc 铝合金黑框黑胶",
+          "prices": [
+            {"shop": "三潜社", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "大洋潜水中心", "price": 1100, "original_price": null, "discount": "", "url": "", "verified": true},
+            {"shop": "岁老闆", "price": null, "original_price": null, "discount": "", "url": "", "verified": false}
+          ],
+          "specs": {"volume": "60cc", "frame": "铝合金", "color": "黑框黑胶", "coating": ""}
+        }
+      ]
+    },
+    {
+      "name": "Shearwater 潜水电脑",
+      "products": [
+        {
+          "model": "Perdix 2 Ti 银色",
+          "prices": [
+            {"shop": "三潜社", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "大洋潜水中心", "price": 7290, "original_price": 8100, "discount": "省810", "url": "", "verified": true},
+            {"shop": "岁老闆", "price": null, "original_price": null, "discount": "", "url": "", "verified": false}
+          ],
+          "specs": {"type": "技术潜水", "display": "彩屏", "battery": "可更换", "ccr": "支持"}
+        },
+        {
+          "model": "Perdix 2 Ti 钛青铜 JE",
+          "prices": [
+            {"shop": "三潜社", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "大洋潜水中心", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "岁老闆", "price": 7055, "original_price": 8500, "discount": "省1445", "url": "", "verified": true}
+          ],
+          "specs": {"type": "技术潜水", "display": "彩屏", "battery": "可更换", "ccr": "支持", "edition": "钛青铜限量版"}
+        },
+        {
+          "model": "TERN 银色",
+          "prices": [
+            {"shop": "三潜社", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "大洋潜水中心", "price": 4520, "original_price": null, "discount": "", "url": "", "verified": true},
+            {"shop": "岁老闆", "price": 3735, "original_price": null, "discount": "省785", "url": "", "verified": true}
+          ],
+          "specs": {"type": "休闲潜水", "display": "单色", "battery": "可更换", "ccr": "不支持"}
+        },
+        {
+          "model": "TERN TX 黑色",
+          "prices": [
+            {"shop": "三潜社", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "大洋潜水中心", "price": 5400, "original_price": null, "discount": "", "url": "", "verified": true},
+            {"shop": "岁老闆", "price": 4980, "original_price": null, "discount": "省420", "url": "", "verified": true}
+          ],
+          "specs": {"type": "休闲潜水", "display": "单色", "battery": "可更换", "ccr": "不支持", "sensor": "支持外接传感器"}
+        },
+        {
+          "model": "Teric 蓝色",
+          "prices": [
+            {"shop": "三潜社", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "大洋潜水中心", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "岁老闆", "price": 6889, "original_price": null, "discount": "", "url": "", "verified": true}
+          ],
+          "specs": {"type": "智能手表式", "display": "AMOLED彩屏", "battery": "充电", "ccr": "支持"}
+        },
+        {
+          "model": "Peregrine TX 黑色",
+          "prices": [
+            {"shop": "三潜社", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "大洋潜水中心", "price": 4500, "original_price": null, "discount": "", "url": "", "verified": true},
+            {"shop": "岁老闆", "price": null, "original_price": null, "discount": "", "url": "", "verified": false}
+          ],
+          "specs": {"type": "休闲潜水", "display": "彩屏", "battery": "可更换", "sensor": "支持外接传感器"}
+        },
+        {
+          "model": "Peregrine 白色",
+          "prices": [
+            {"shop": "三潜社", "price": null, "original_price": null, "discount": "", "url": "", "verified": false},
+            {"shop": "大洋潜水中心", "price": 3250, "original_price": null, "discount": "", "url": "", "verified": true},
+            {"shop": "岁老闆", "price": null, "original_price": null, "discount": "", "url": "", "verified": false}
+          ],
+          "specs": {"type": "休闲潜水", "display": "彩屏", "battery": "可更换", "sensor": "不支持"}
+        }
+      ]
+    }
+  ],
+  "shops": [
+    {"name": "三潜社", "focus": "Apollo面镜", "reliability": "⭐⭐⭐⭐"},
+    {"name": "大洋潜水中心", "focus": "入门/中端电脑表", "reliability": "⭐⭐⭐⭐⭐"},
+    {"name": "岁老闆", "focus": "Shearwater全系", "reliability": "⭐⭐⭐⭐⭐"}
+  ]
+}

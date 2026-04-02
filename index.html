@@ -5,473 +5,141 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🤿 潜水装备价格对比看板</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        header {
-            text-align: center;
-            color: white;
-            padding: 40px 20px;
-        }
-        
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        header .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .update-time {
-            background: rgba(255,255,255,0.2);
-            display: inline-block;
-            padding: 8px 20px;
-            border-radius: 20px;
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-        
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-        
-        .card-title {
-            font-size: 1.4rem;
-            color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #667eea;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            background: #f8f9fa;
-            padding: 15px 12px;
-            text-align: left;
-            font-weight: 600;
-            color: #555;
-            border-bottom: 2px solid #e9ecef;
-        }
-        
-        td {
-            padding: 15px 12px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .price {
-            font-weight: 700;
-            color: #e74c3c;
-            font-size: 1.1rem;
-        }
-        
-        .price-lowest {
-            background: #d4edda;
-            color: #155724;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-weight: 600;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        
-        .badge-hot {
-            background: #ffeaa7;
-            color: #d63031;
-        }
-        
-        .badge-recommend {
-            background: #74b9ff;
-            color: #0984e3;
-        }
-        
-        .badge-new {
-            background: #a29bfe;
-            color: #6c5ce7;
-        }
-        
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .summary-item {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-        }
-        
-        .summary-item h4 {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-bottom: 8px;
-        }
-        
-        .summary-item .value {
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-        
-        .summary-item .shop {
-            font-size: 0.85rem;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-        
-        .shop-tag {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-right: 5px;
-        }
-        
-        .shop-sanqian {
-            background: #ff7675;
-            color: white;
-        }
-        
-        .shop-dayang {
-            background: #74b9ff;
-            color: white;
-        }
-        
-        .shop-suilaoban {
-            background: #00b894;
-            color: white;
-        }
-        
-        footer {
-            text-align: center;
-            color: white;
-            padding: 30px;
-            opacity: 0.8;
-        }
-        
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .card {
-                padding: 15px;
-            }
-            
-            th, td {
-                padding: 10px 8px;
-                font-size: 0.9rem;
-            }
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; color: white; padding: 40px 20px; }
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .update-time { background: rgba(255,255,255,0.2); display: inline-block; padding: 8px 20px; border-radius: 20px; margin-top: 15px; }
+        .card { background: white; border-radius: 16px; padding: 25px; margin-bottom: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .card-title { font-size: 1.4rem; color: #333; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 3px solid #667eea; display: flex; align-items: center; gap: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9fa; padding: 15px 12px; text-align: left; font-weight: 600; color: #555; border-bottom: 2px solid #e9ecef; }
+        td { padding: 12px; border-bottom: 1px solid #e9ecef; }
+        tr:hover { background: #f8f9fa; }
+        .price { font-weight: 700; color: #e74c3c; font-size: 1.1rem; }
+        .price-lowest { background: #d4edda; color: #155724; padding: 4px 10px; border-radius: 12px; font-weight: 600; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 500; }
+        .badge-verified { background: #d4edda; color: #155724; }
+        .badge-pending { background: #fff3cd; color: #856404; }
+        .shop-tag { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.75rem; font-weight: 500; margin-right: 5px; }
+        .shop-sanqian { background: #ff7675; color: white; }
+        .shop-dayang { background: #74b9ff; color: white; }
+        .shop-suilaoban { background: #00b894; color: white; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-item { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; text-align: center; }
+        .stat-value { font-size: 2rem; font-weight: 700; }
+        .stat-label { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+        footer { text-align: center; color: white; padding: 30px; opacity: 0.8; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>🤿 潜水装备价格对比看板</h1>
-            <p class="subtitle">淘宝潜水电脑表 & 自由潜面镜 实时价格监控</p>
-            <div class="update-time">📅 更新时间：2026-04-02 11:59</div>
+            <p>淘宝潜水电脑表 & 自由潜面镜 实时价格监控</p>
+            <div class="update-time">📅 更新时间：2026-04-02</div>
         </header>
 
-        <!-- 价格概览 -->
         <div class="card">
-            <h2 class="card-title">📈 今日最优价格</h2>
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <h4>💰 入门首选</h4>
-                    <div class="value">¥3,250</div>
-                    <div class="shop">Peregrine 白色 | 大洋潜水中心</div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value">11</div>
+                    <div class="stat-label">监控产品</div>
                 </div>
-                <div class="summary-item">
-                    <h4>🥽 面镜最低价</h4>
-                    <div class="value">¥1,080</div>
-                    <div class="shop">Apollo 95cc 铝合金 | 三潜社</div>
+                <div class="stat-item">
+                    <div class="stat-value">13</div>
+                    <div class="stat-label">已验证价格</div>
                 </div>
-                <div class="summary-item">
-                    <h4>⌚ 中端推荐</h4>
-                    <div class="value">¥3,735</div>
-                    <div class="shop">TERN 银色 | 岁老闆</div>
-                </div>
-                <div class="summary-item">
-                    <h4>⭐ 专业级</h4>
-                    <div class="value">¥7,055</div>
-                    <div class="shop">Perdix 2 Ti 钛青铜 | 岁老闆</div>
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">监控店铺</div>
                 </div>
             </div>
         </div>
 
-        <!-- Apollo 面镜 -->
         <div class="card">
-            <h2 class="card-title">🥽 Apollo 自由潜面镜价格对比</h2>
+            <h2 class="card-title">🤿 Apollo 自由潜面镜</h2>
             <table>
                 <thead>
                     <tr>
                         <th>型号</th>
                         <th>三潜社</th>
                         <th>大洋潜水中心</th>
+                        <th>岁老闆</th>
                         <th>最低价</th>
-                        <th>标签</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>85cc 不锈钢金色 UV</td>
-                        <td>¥2,142</td>
-                        <td>-</td>
-                        <td><span class="price">¥2,142</span></td>
-                        <td><span class="badge badge-recommend">经典款</span></td>
-                    </tr>
-                    <tr>
-                        <td>95cc 不锈钢黑银 UV AR</td>
-                        <td>¥2,430</td>
-                        <td>-</td>
-                        <td><span class="price">¥2,430</span></td>
-                        <td><span class="badge badge-new">防雾版</span></td>
-                    </tr>
-                    <tr>
-                        <td>95cc 铝合金黑框黑胶</td>
-                        <td><span class="price-lowest">¥1,080</span></td>
-                        <td>-</td>
-                        <td><span class="price">¥1,080</span> 🔥</td>
-                        <td><span class="badge badge-hot">性价比之王</span></td>
-                    </tr>
-                    <tr>
-                        <td>60cc 铝合金黑框黑胶</td>
-                        <td>-</td>
-                        <td>¥1,100</td>
-                        <td><span class="price">¥1,100</span></td>
-                        <td><span class="badge badge-recommend">紧凑款</span></td>
-                    </tr>
+<tr><td><strong>Apollo 85cc 不锈钢金色 UV</strong></td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥2,142</span></td><td>-</td><td>-</td><td><span class="price-lowest">¥2,142</span> (三潜社)</td></tr><tr><td><strong>Apollo 95cc 不锈钢黑银 UV AR</strong></td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥2,430</span></td><td>-</td><td>-</td><td><span class="price-lowest">¥2,430</span> (三潜社)</td></tr><tr><td><strong>Apollo 95cc 铝合金黑框黑胶</strong></td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥1,080</span></td><td>-</td><td>-</td><td><span class="price-lowest">¥1,080</span> (三潜社)</td></tr><tr><td><strong>Apollo 60cc 铝合金黑框黑胶</strong></td><td>-</td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥1,100</span></td><td>-</td><td><span class="price-lowest">¥1,100</span> (大洋潜水中心)</td></tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- Shearwater 潜水电脑 -->
         <div class="card">
-            <h2 class="card-title">⌚ Shearwater 潜水电脑价格对比</h2>
-            
-            <h3 style="margin: 20px 0 15px; color: #555;">Perdix 2 Ti 系列</h3>
+            <h2 class="card-title">🤿 Shearwater 潜水电脑</h2>
             <table>
                 <thead>
                     <tr>
                         <th>型号</th>
+                        <th>三潜社</th>
                         <th>大洋潜水中心</th>
                         <th>岁老闆</th>
                         <th>最低价</th>
-                        <th>优惠力度</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Perdix 2 Ti 银色</td>
-                        <td>¥7,290</td>
-                        <td>-</td>
-                        <td><span class="price">¥7,290</span></td>
-                        <td>省 ¥810</td>
-                    </tr>
-                    <tr>
-                        <td>Perdix 2 Ti 钛青铜 JE</td>
-                        <td>-</td>
-                        <td><span class="price-lowest">¥7,055</span></td>
-                        <td><span class="price">¥7,055</span> ⭐</td>
-                        <td>省 ¥1,445</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3 style="margin: 30px 0 15px; color: #555;">TERN 系列</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>型号</th>
-                        <th>大洋潜水中心</th>
-                        <th>岁老闆</th>
-                        <th>最低价</th>
-                        <th>优惠力度</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>TERN 银色</td>
-                        <td>¥4,520</td>
-                        <td><span class="price-lowest">¥3,735</span></td>
-                        <td><span class="price">¥3,735</span> 🔥</td>
-                        <td>省 ¥785</td>
-                    </tr>
-                    <tr>
-                        <td>TERN TX 黑色</td>
-                        <td>¥5,400</td>
-                        <td><span class="price-lowest">¥4,980</span></td>
-                        <td><span class="price">¥4,980</span> ⭐</td>
-                        <td>省 ¥420</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3 style="margin: 30px 0 15px; color: #555;">其他型号</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>型号</th>
-                        <th>店铺</th>
-                        <th>价格</th>
-                        <th>标签</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Teric 蓝色</td>
-                        <td><span class="shop-tag shop-suilaoban">岁老闆</span></td>
-                        <td><span class="price">¥6,889</span></td>
-                        <td><span class="badge badge-recommend">彩屏智能</span></td>
-                    </tr>
-                    <tr>
-                        <td>Peregrine TX 黑色</td>
-                        <td><span class="shop-tag shop-dayang">大洋潜水中心</span></td>
-                        <td><span class="price">¥4,500</span></td>
-                        <td><span class="badge badge-new">传感器版</span></td>
-                    </tr>
-                    <tr>
-                        <td>Peregrine 白色</td>
-                        <td><span class="shop-tag shop-dayang">大洋潜水中心</span></td>
-                        <td><span class="price">¥3,250</span> 🔥</td>
-                        <td><span class="badge badge-hot">全场最低</span></td>
-                    </tr>
+<tr><td><strong>Perdix 2 Ti 银色</strong></td><td>-</td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥7,290</span></td><td>-</td><td><span class="price-lowest">¥7,290</span> (大洋潜水中心)</td></tr><tr><td><strong>Perdix 2 Ti 钛青铜 JE</strong></td><td>-</td><td>-</td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥7,055</span></td><td><span class="price-lowest">¥7,055</span> (岁老闆)</td></tr><tr><td><strong>TERN 银色</strong></td><td>-</td><td><span class="badge-verified">✅</span> <span class="price">¥4,520</span></td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥3,735</span></td><td><span class="price-lowest">¥3,735</span> (岁老闆)</td></tr><tr><td><strong>TERN TX 黑色</strong></td><td>-</td><td><span class="badge-verified">✅</span> <span class="price">¥5,400</span></td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥4,980</span></td><td><span class="price-lowest">¥4,980</span> (岁老闆)</td></tr><tr><td><strong>Teric 蓝色</strong></td><td>-</td><td>-</td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥6,889</span></td><td><span class="price-lowest">¥6,889</span> (岁老闆)</td></tr><tr><td><strong>Peregrine TX 黑色</strong></td><td>-</td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥4,500</span></td><td>-</td><td><span class="price-lowest">¥4,500</span> (大洋潜水中心)</td></tr><tr><td><strong>Peregrine 白色</strong></td><td>-</td><td><span class="badge-verified">✅</span> <span class="price-lowest">¥3,250</span></td><td>-</td><td><span class="price-lowest">¥3,250</span> (大洋潜水中心)</td></tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- 购买建议 -->
         <div class="card">
-            <h2 class="card-title">🎯 购买建议</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>需求场景</th>
-                        <th>推荐产品</th>
-                        <th>推荐店铺</th>
-                        <th>参考价格</th>
-                        <th>推荐理由</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>🥽 面镜入门</td>
-                        <td>Apollo 95cc 铝合金</td>
-                        <td><span class="shop-tag shop-sanqian">三潜社</span></td>
-                        <td><span class="price">¥1,080</span></td>
-                        <td>性价比最高，新手首选</td>
-                    </tr>
-                    <tr>
-                        <td>💰 预算有限</td>
-                        <td>Peregrine 白色</td>
-                        <td><span class="shop-tag shop-dayang">大洋潜水中心</span></td>
-                        <td><span class="price">¥3,250</span></td>
-                        <td>全场最低价，功能齐全</td>
-                    </tr>
-                    <tr>
-                        <td>⌚ 中端首选</td>
-                        <td>TERN 银色</td>
-                        <td><span class="shop-tag shop-suilaoban">岁老闆</span></td>
-                        <td><span class="price">¥3,735</span></td>
-                        <td>性价比突出，功能均衡</td>
-                    </tr>
-                    <tr>
-                        <td>📡 传感器需求</td>
-                        <td>TERN TX 黑色</td>
-                        <td><span class="shop-tag shop-suilaoban">岁老闆</span></td>
-                        <td><span class="price">¥4,980</span></td>
-                        <td>可接传感器，专业之选</td>
-                    </tr>
-                    <tr>
-                        <td>⭐ 专业级</td>
-                        <td>Perdix 2 Ti 钛青铜</td>
-                        <td><span class="shop-tag shop-suilaoban">岁老闆</span></td>
-                        <td><span class="price">¥7,055</span></td>
-                        <td>顶级配置，CCR适用</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- 店铺总结 -->
-        <div class="card">
-            <h2 class="card-title">🏪 店铺价格优势总结</h2>
+            <h2 class="card-title">🏪 店铺价格优势</h2>
             <table>
                 <thead>
                     <tr>
                         <th>店铺</th>
-                        <th>优势产品</th>
-                        <th>价格特点</th>
-                        <th>推荐指数</th>
+                        <th>最低价数量</th>
+                        <th>占比</th>
+                        <th>专注领域</th>
                     </tr>
                 </thead>
                 <tbody>
+
                     <tr>
                         <td><span class="shop-tag shop-sanqian">三潜社</span></td>
-                        <td>Apollo 面镜系列</td>
-                        <td>95cc 铝合金款最便宜</td>
-                        <td>⭐⭐⭐⭐</td>
+                        <td>3/11</td>
+                        <td>27.3%</td>
+                        <td>Apollo面镜</td>
                     </tr>
+
                     <tr>
                         <td><span class="shop-tag shop-dayang">大洋潜水中心</span></td>
-                        <td>Peregrine 白色</td>
-                        <td>全场最低价 ¥3,250</td>
-                        <td>⭐⭐⭐⭐⭐</td>
+                        <td>4/11</td>
+                        <td>36.4%</td>
+                        <td>入门/中端电脑表</td>
                     </tr>
+
                     <tr>
                         <td><span class="shop-tag shop-suilaoban">岁老闆</span></td>
-                        <td>Shearwater 电脑表全系</td>
-                        <td>TERN/Perdix 系列全面最低</td>
-                        <td>⭐⭐⭐⭐⭐</td>
+                        <td>4/11</td>
+                        <td>36.4%</td>
+                        <td>Shearwater全系</td>
                     </tr>
+
                 </tbody>
             </table>
         </div>
-
+        
         <footer>
             <p>🤿 淘宝潜水装备价格监控 | 数据仅供参考，购买前请核实</p>
-            <p style="margin-top: 10px; font-size: 0.9rem;">© 2026 潜水装备价格看板 | Generated by OpenClaw</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">✅=已验证 ⏳=待补充数据</p>
         </footer>
     </div>
 </body>
